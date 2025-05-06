@@ -1,0 +1,2189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 8 ICT Interactive Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f9ff;
+            overflow-x: hidden;
+        }
+        
+        .slide {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .slide.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .drag-item {
+            cursor: grab;
+            transition: transform 0.2s;
+        }
+        
+        .drag-item:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+        }
+        
+        .drop-zone {
+            min-height: 120px;
+            transition: background-color 0.3s;
+        }
+        
+        .drop-zone.highlight {
+            background-color: #e0f2fe;
+        }
+        
+        .option-card {
+            transition: all 0.3s;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .flip-card {
+            perspective: 1000px;
+        }
+        
+        .flip-card-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+        }
+        
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Navigation Sidebar -->
+    <div class="fixed left-0 top-0 h-full w-64 bg-blue-600 text-white shadow-lg transform -translate-x-64 md:translate-x-0 transition-transform duration-300 z-50" id="sidebar">
+        <div class="p-4 flex justify-between items-center border-b border-blue-500">
+            <h1 class="text-xl font-bold">ICT Explorer</h1>
+            <button id="closeSidebar" class="md:hidden">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="p-4 overflow-y-auto h-[calc(100%-60px)]">
+            <div class="mb-6">
+                <h2 class="font-semibold text-blue-200 mb-2">Topics</h2>
+                <ul class="space-y-2">
+                    <li><a href="#" class="topic-link block py-2 px-3 rounded hover:bg-blue-500 transition" data-topic="atm">ATM Machines</a></li>
+                    <li><a href="#" class="topic-link block py-2 px-3 rounded hover:bg-blue-500 transition" data-topic="printers">Printers & Scanners</a></li>
+                    <li><a href="#" class="topic-link block py-2 px-3 rounded hover:bg-blue-500 transition" data-topic="routers">Routers & Wi-Fi</a></li>
+                    <li><a href="#" class="topic-link block py-2 px-3 rounded hover:bg-blue-500 transition" data-topic="websites">Websites & Search Engines</a></li>
+                    <li><a href="#" class="topic-link block py-2 px-3 rounded hover:bg-blue-500 transition" data-topic="social">Social Networking</a></li>
+                    <li><a href="#" class="topic-link block py-2 px-3 rounded hover:bg-blue-500 transition" data-topic="blogs">Blogs</a></li>
+                    <li><a href="#" class="topic-link block py-2 px-3 rounded hover:bg-blue-500 transition" data-topic="ai">AI & Cloud Computing</a></li>
+                    <li><a href="#" class="topic-link block py-2 px-3 rounded hover:bg-blue-500 transition" data-topic="robotics">Robotics & VR</a></li>
+                    <li><a href="#" class="topic-link block py-2 px-3 rounded hover:bg-blue-500 transition" data-topic="cyber">Cybersecurity</a></li>
+                </ul>
+            </div>
+            <div class="mt-8">
+                <button id="toggleAudio" class="flex items-center gap-2 bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-full transition">
+                    <i class="fas fa-volume-up"></i>
+                    <span>Audio On</span>
+                </button>
+                <button id="helpBtn" class="mt-4 flex items-center gap-2 bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded-full transition">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-0 md:ml-64 transition-all duration-300">
+        <!-- Header -->
+        <header class="bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-40">
+            <button id="toggleSidebar" class="md:hidden text-blue-600">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+            <h1 class="text-xl font-bold text-blue-600">Grade 8 ICT Interactive Learning</h1>
+            <div class="flex items-center gap-4">
+                <div class="hidden md:block">
+                    <div class="flex items-center gap-2">
+                        <span id="currentTopic" class="font-medium">Select a topic</span>
+                    </div>
+                </div>
+                <div class="w-32 bg-gray-200 rounded-full h-2.5">
+                    <div id="progressBar" class="progress-bar bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Slides Container -->
+        <main class="p-4 min-h-[calc(100vh-73px)] bg-gradient-to-b from-blue-50 to-white">
+            <!-- Welcome Slide -->
+            <div id="welcome" class="slide active max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-8 text-center">
+                <div class="animate-bounce mb-8">
+                    <i class="fas fa-laptop-code text-blue-500 text-6xl"></i>
+                </div>
+                <h1 class="text-4xl font-bold text-blue-600 mb-6">Welcome to ICT Explorer!</h1>
+                <p class="text-lg text-gray-700 mb-8">An interactive learning adventure for Grade 8 students. Explore exciting topics in Information and Communication Technology through fun activities and games.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                    <div class="bg-blue-50 p-6 rounded-lg border border-blue-100">
+                        <i class="fas fa-graduation-cap text-blue-500 text-3xl mb-3"></i>
+                        <h3 class="font-bold text-blue-600 mb-2">What You'll Learn</h3>
+                        <p class="text-gray-700">Modern ICT concepts from ATMs to AI, with interactive activities to reinforce learning.</p>
+                    </div>
+                    <div class="bg-purple-50 p-6 rounded-lg border border-purple-100">
+                        <i class="fas fa-gamepad text-purple-500 text-3xl mb-3"></i>
+                        <h3 class="font-bold text-purple-600 mb-2">Interactive Features</h3>
+                        <p class="text-gray-700">Drag & drop, matching games, quizzes, and more to make learning fun!</p>
+                    </div>
+                </div>
+                
+                <button id="startLearning" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full text-lg transition transform hover:scale-105">
+                    Start Learning <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+
+            <!-- ATM Topic Slides -->
+            <div id="atm-topic" class="topic-slides">
+                <!-- ATM Slide 1: Introduction -->
+                <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-blue-600">ATM Machines</h2>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">1/4</span>
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row gap-6 mb-6">
+                            <div class="md:w-1/2">
+                                <img src="https://images.unsplash.com/photo-1550565360-698abc5bdef2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="ATM Machine" class="w-full h-auto rounded-lg shadow-md cursor-pointer hover:shadow-lg transition" id="atmImage">
+                                <p class="text-sm text-gray-500 mt-2 text-center"><i class="fas fa-mouse-pointer mr-1"></i> Click the image to zoom</p>
+                            </div>
+                            <div class="md:w-1/2">
+                                <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                                    <h3 class="font-semibold text-blue-700 mb-2">What is an ATM?</h3>
+                                    <p class="text-gray-700">An Automated Teller Machine (ATM) is an electronic banking outlet that allows customers to complete basic transactions without a bank teller.</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h3 class="font-semibold text-yellow-700 mb-2">Did You Know?</h3>
+                                    <p class="text-gray-700">The first ATM was installed in London in 1967 by Barclays Bank. Today there are over 3 million ATMs worldwide!</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <p class="text-gray-700 flex items-center">
+                                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                                <span>ATMs are available 24/7, making banking convenient anytime!</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                        <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            <i class="fas fa-arrow-left mr-2"></i> Back
+                        </button>
+                        <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            Next <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ATM Slide 2: Parts of ATM -->
+                <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-blue-600">Parts of an ATM</h2>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">2/4</span>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <p class="text-gray-700 mb-4">An ATM has several input and output parts that help you complete transactions. Let's identify them:</p>
+                            
+                            <div class="relative">
+                                <img src="https://images.unsplash.com/photo-1550565360-698abc5bdef2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="ATM with labels" class="w-full h-auto rounded-lg shadow-md" id="labeledAtm">
+                                
+                                <!-- These would be positioned absolutely over the image in a real implementation -->
+                                <div class="absolute top-1/4 left-1/4 tooltip">
+                                    <div class="w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
+                                    <div class="tooltip-text">Card Reader - Reads your bank card</div>
+                                </div>
+                                <div class="absolute top-1/3 right-1/4 tooltip">
+                                    <div class="w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
+                                    <div class="tooltip-text">Keypad - For entering your PIN</div>
+                                </div>
+                                <div class="absolute top-1/2 left-1/2 tooltip">
+                                    <div class="w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
+                                    <div class="tooltip-text">Screen - Displays information</div>
+                                </div>
+                                <div class="absolute bottom-1/4 right-1/4 tooltip">
+                                    <div class="w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
+                                    <div class="tooltip-text">Cash Dispenser - Gives out money</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="bg-green-50 p-3 rounded-lg border border-green-100">
+                                <h4 class="font-semibold text-green-700 mb-1">Input Devices</h4>
+                                <ul class="text-sm text-gray-700 list-disc pl-5">
+                                    <li>Card reader</li>
+                                    <li>Keypad</li>
+                                    <li>Touch screen</li>
+                                </ul>
+                            </div>
+                            <div class="bg-purple-50 p-3 rounded-lg border border-purple-100">
+                                <h4 class="font-semibold text-purple-700 mb-1">Output Devices</h4>
+                                <ul class="text-sm text-gray-700 list-disc pl-5">
+                                    <li>Screen</li>
+                                    <li>Cash dispenser</li>
+                                    <li>Receipt printer</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                        <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            <i class="fas fa-arrow-left mr-2"></i> Back
+                        </button>
+                        <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            Next <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ATM Slide 3: How it Works -->
+                <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-blue-600">How ATMs Work</h2>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">3/4</span>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <p class="text-gray-700 mb-4">Let's follow the steps of how an ATM transaction works:</p>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="bg-blue-100 text-blue-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Insert Card</h4>
+                                        <p class="text-gray-700 text-sm">You insert your bank card into the card reader.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="bg-blue-100 text-blue-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Enter PIN</h4>
+                                        <p class="text-gray-700 text-sm">You enter your secret PIN using the keypad.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="bg-blue-100 text-blue-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Select Transaction</h4>
+                                        <p class="text-gray-700 text-sm">You choose what you want to do (withdraw, check balance, etc.)</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="bg-blue-100 text-blue-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Complete Transaction</h4>
+                                        <p class="text-gray-700 text-sm">The ATM communicates with your bank and completes your request.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start">
+                                    <div class="bg-blue-100 text-blue-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">5</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Take Card & Cash</h4>
+                                        <p class="text-gray-700 text-sm">You take your card back and receive cash if requested.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <h4 class="font-semibold text-blue-700 mb-2">Interactive Diagram</h4>
+                            <p class="text-gray-700 mb-3">Click on the numbers to see what happens at each step:</p>
+                            <div class="flex justify-center">
+                                <img src="https://www.svgrepo.com/show/530363/atm-machine.svg" alt="ATM diagram" class="h-40">
+                            </div>
+                            <div class="mt-3 text-center">
+                                <button class="step-btn bg-blue-100 hover:bg-blue-200 text-blue-800 py-1 px-3 rounded-full text-sm mr-2" data-step="1">1</button>
+                                <button class="step-btn bg-blue-100 hover:bg-blue-200 text-blue-800 py-1 px-3 rounded-full text-sm mr-2" data-step="2">2</button>
+                                <button class="step-btn bg-blue-100 hover:bg-blue-200 text-blue-800 py-1 px-3 rounded-full text-sm mr-2" data-step="3">3</button>
+                                <button class="step-btn bg-blue-100 hover:bg-blue-200 text-blue-800 py-1 px-3 rounded-full text-sm mr-2" data-step="4">4</button>
+                                <button class="step-btn bg-blue-100 hover:bg-blue-200 text-blue-800 py-1 px-3 rounded-full text-sm" data-step="5">5</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                        <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            <i class="fas fa-arrow-left mr-2"></i> Back
+                        </button>
+                        <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            Next <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ATM Slide 4: Safety & Activity -->
+                <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-blue-600">ATM Safety & Activity</h2>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">4/4</span>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <div class="bg-red-50 p-4 rounded-lg border border-red-200 mb-4">
+                                <h3 class="font-semibold text-red-700 mb-2">ATM Safety Tips</h3>
+                                <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                                    <li>Always shield the keypad when entering your PIN</li>
+                                    <li>Be aware of your surroundings when using an ATM</li>
+                                    <li>Never share your PIN with anyone</li>
+                                    <li>Check for suspicious devices attached to the ATM</li>
+                                    <li>Take your receipt and card after the transaction</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                                <h3 class="font-semibold text-green-700 mb-3">Drag & Drop Activity</h3>
+                                <p class="text-gray-700 mb-4">Match the ATM parts to their correct names:</p>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="space-y-2">
+                                        <h4 class="font-medium text-gray-700">Parts to Match:</h4>
+                                        <div class="drag-item bg-white p-3 rounded border border-gray-300 shadow-sm" draggable="true" data-item="card-reader">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-grip-lines text-gray-400 mr-2"></i>
+                                                <span>Card Reader</span>
+                                            </div>
+                                        </div>
+                                        <div class="drag-item bg-white p-3 rounded border border-gray-300 shadow-sm" draggable="true" data-item="keypad">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-grip-lines text-gray-400 mr-2"></i>
+                                                <span>Keypad</span>
+                                            </div>
+                                        </div>
+                                        <div class="drag-item bg-white p-3 rounded border border-gray-300 shadow-sm" draggable="true" data-item="screen">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-grip-lines text-gray-400 mr-2"></i>
+                                                <span>Screen</span>
+                                            </div>
+                                        </div>
+                                        <div class="drag-item bg-white p-3 rounded border border-gray-300 shadow-sm" draggable="true" data-item="cash-dispenser">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-grip-lines text-gray-400 mr-2"></i>
+                                                <span>Cash Dispenser</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <h4 class="font-medium text-gray-700 mb-2">Drop Zones:</h4>
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <div class="drop-zone bg-gray-100 p-4 rounded border-2 border-dashed border-gray-300 text-center" data-zone="card-reader">
+                                                <img src="https://www.svgrepo.com/show/530363/atm-machine.svg" class="h-16 mx-auto mb-2 opacity-50">
+                                                <p class="text-sm text-gray-500">Drop here</p>
+                                            </div>
+                                            <div class="drop-zone bg-gray-100 p-4 rounded border-2 border-dashed border-gray-300 text-center" data-zone="keypad">
+                                                <img src="https://www.svgrepo.com/show/530363/atm-machine.svg" class="h-16 mx-auto mb-2 opacity-50">
+                                                <p class="text-sm text-gray-500">Drop here</p>
+                                            </div>
+                                            <div class="drop-zone bg-gray-100 p-4 rounded border-2 border-dashed border-gray-300 text-center" data-zone="screen">
+                                                <img src="https://www.svgrepo.com/show/530363/atm-machine.svg" class="h-16 mx-auto mb-2 opacity-50">
+                                                <p class="text-sm text-gray-500">Drop here</p>
+                                            </div>
+                                            <div class="drop-zone bg-gray-100 p-4 rounded border-2 border-dashed border-gray-300 text-center" data-zone="cash-dispenser">
+                                                <img src="https://www.svgrepo.com/show/530363/atm-machine.svg" class="h-16 mx-auto mb-2 opacity-50">
+                                                <p class="text-sm text-gray-500">Drop here</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                            <h3 class="font-semibold text-yellow-700 mb-2">Reflection Question</h3>
+                            <p class="text-gray-700 mb-2">Why is it important to be careful when using an ATM?</p>
+                            <textarea class="w-full p-2 border border-gray-300 rounded" rows="2" placeholder="Write your thoughts here..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                        <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            <i class="fas fa-arrow-left mr-2"></i> Back
+                        </button>
+                        <button class="finish-topic bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            Finish Topic <i class="fas fa-check ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Printers & Scanners Topic Slides -->
+            <div id="printers-topic" class="topic-slides">
+                <!-- Printer Slide 1: Introduction -->
+                <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-blue-600">Printers & Scanners</h2>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">1/4</span>
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row gap-6 mb-6">
+                            <div class="md:w-1/2">
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                                        <img src="https://www.svgrepo.com/show/530363/printer.svg" class="h-16 mx-auto mb-2">
+                                        <h4 class="font-semibold text-gray-800">Printer</h4>
+                                        <p class="text-sm text-gray-600">Creates physical copies of digital documents</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                                        <img src="https://www.svgrepo.com/show/530363/scanner.svg" class="h-16 mx-auto mb-2">
+                                        <h4 class="font-semibold text-gray-800">Scanner</h4>
+                                        <p class="text-sm text-gray-600">Converts physical documents to digital</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                                        <img src="https://www.svgrepo.com/show/530363/photocopier.svg" class="h-16 mx-auto mb-2">
+                                        <h4 class="font-semibold text-gray-800">Photocopier</h4>
+                                        <p class="text-sm text-gray-600">Makes copies of physical documents</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                                        <img src="https://www.svgrepo.com/show/530363/all-in-one.svg" class="h-16 mx-auto mb-2">
+                                        <h4 class="font-semibold text-gray-800">All-in-One</h4>
+                                        <p class="text-sm text-gray-600">Combines printing, scanning, copying</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="md:w-1/2">
+                                <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                                    <h3 class="font-semibold text-blue-700 mb-2">What Do They Do?</h3>
+                                    <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                        <li><strong>Printers</strong> produce hard copies of digital files</li>
+                                        <li><strong>Scanners</strong> create digital files from physical documents</li>
+                                        <li><strong>Photocopiers</strong> duplicate physical documents quickly</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h3 class="font-semibold text-purple-700 mb-2">Common Uses</h3>
+                                    <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                        <li>Printing school assignments</li>
+                                        <li>Scanning family photos</li>
+                                        <li>Copying important documents</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <p class="text-gray-700 flex items-center">
+                                <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                                <span>Many modern devices combine all these functions into one machine!</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                        <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            <i class="fas fa-arrow-left mr-2"></i> Back
+                        </button>
+                        <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            Next <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Printer Slide 2: Types of Printers -->
+                <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-blue-600">Types of Printers</h2>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">2/4</span>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <p class="text-gray-700 mb-4">There are several types of printers, each with different technologies:</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                    <div class="flex items-start">
+                                        <img src="https://www.svgrepo.com/show/530363/inkjet-printer.svg" class="h-12 mr-3">
+                                        <div>
+                                            <h4 class="font-semibold text-gray-800">Inkjet Printers</h4>
+                                            <p class="text-sm text-gray-600">Spray tiny droplets of ink onto paper. Good for color printing and photos.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                    <div class="flex items-start">
+                                        <img src="https://www.svgrepo.com/show/530363/laser-printer.svg" class="h-12 mr-3">
+                                        <div>
+                                            <h4 class="font-semibold text-gray-800">Laser Printers</h4>
+                                            <p class="text-sm text-gray-600">Use toner powder and heat. Faster and better for text documents.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                    <div class="flex items-start">
+                                        <img src="https://www.svgrepo.com/show/530363/dot-matrix.svg" class="h-12 mr-3">
+                                        <div>
+                                            <h4 class="font-semibold text-gray-800">Dot Matrix</h4>
+                                            <p class="text-sm text-gray-600">Older technology that uses pins to strike ink ribbon. Still used for carbon copies.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                    <div class="flex items-start">
+                                        <img src="https://www.svgrepo.com/show/530363/3d-printer.svg" class="h-12 mr-3">
+                                        <div>
+                                            <h4 class="font-semibold text-gray-800">3D Printers</h4>
+                                            <p class="text-sm text-gray-600">Create three-dimensional objects by adding material layer by layer.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                <h4 class="font-semibold text-yellow-700 mb-2">Quick Comparison</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full bg-white text-sm">
+                                        <thead>
+                                            <tr class="bg-gray-100">
+                                                <th class="py-2 px-4 text-left">Type</th>
+                                                <th class="py-2 px-4 text-left">Best For</th>
+                                                <th class="py-2 px-4 text-left">Speed</th>
+                                                <th class="py-2 px-4 text-left">Cost</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="border-b border-gray-200">
+                                                <td class="py-2 px-4">Inkjet</td>
+                                                <td class="py-2 px-4">Photos, color</td>
+                                                <td class="py-2 px-4">Medium</td>
+                                                <td class="py-2 px-4">Low initial, high ink</td>
+                                            </tr>
+                                            <tr class="border-b border-gray-200">
+                                                <td class="py-2 px-4">Laser</td>
+                                                <td class="py-2 px-4">Text, office</td>
+                                                <td class="py-2 px-4">Fast</td>
+                                                <td class="py-2 px-4">Higher initial, lower per page</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="py-2 px-4">3D</td>
+                                                <td class="py-2 px-4">Objects, prototypes</td>
+                                                <td class="py-2 px-4">Very slow</td>
+                                                <td class="py-2 px-4">Expensive</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                        <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            <i class="fas fa-arrow-left mr-2"></i> Back
+                        </button>
+                        <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            Next <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Printer Slide 3: How to Use -->
+                <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-2xl font-bold text-blue-600">Using Printers & Scanners</h2>
+                            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">3/4</span>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <p class="text-gray-700 mb-4">Follow these steps to use printers and scanners:</p>
+                            
+                            <div class="flex flex-col md:flex-row gap-6 mb-6">
+                                <div class="md:w-1/2">
+                                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm mb-4">
+                                        <h4 class="font-semibold text-gray-800 mb-3">Printing a Document</h4>
+                                        <ol class="list-decimal pl-5 space-y-2 text-gray-700">
+                                            <li>Open the document you want to print</li>
+                                            <li>Click "File" then "Print" or press Ctrl+P</li>
+                                            <li>Connect your computer with Printer using USB cable.</li>
+                                            <li>Then, Select your printer from the list</li>
+                                            <li>Choose printing options (pages, copies, etc.)</li>
+                                            <li>Click "Print" and wait for your document</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                                <div class="md:w-1/2">
+                                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                        <h4 class="font-semibold text-gray-800 mb-3">Scanning a Document</h4>
+                                        <ol class="list-decimal pl-5 space-y-2 text-gray-700">
+                                            <li>Place your document on the scanner glass</li>
+                                            <li>Open your scanning software</li>
+                                            <li>Select scan settings (color, resolution, etc.)</li>
+                                            <li>Click "Scan" and save your digital file</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                <h4 class="font-semibold text-blue-700 mb-2">Interactive Practice</h4>
+                                <p class="text-gray-700 mb-3">Click on the printer to see how it works:</p>
+                                <div class="flex justify-center">
+                                    <div class="flip-card w-48 h-48 cursor-pointer" id="printerFlipCard">
+                                        <div class="flip-card-inner relative w-full h-full">
+                                            <div class="flip-card-front absolute w-full h-full bg-white rounded-lg shadow-md flex flex-col items-center justify-center p-4">
+                                                <img src="https://www.svgrepo.com/show/530363/printer.svg" class="h-24 mb-2">
+                                                <p class="text-sm text-gray-600">Click to see inside</p>
+                                            </div>
+                                            <div class="flip-card-back absolute w-full h-full bg-blue-100 rounded-lg shadow-md flex flex-col items-center justify-center p-4">
+                                                <img src="https://www.svgrepo.com/show/530363/printer-inside.svg" class="h-24 mb-2">
+                                                <p class="text-sm text-gray-700 text-center">This is how ink gets onto paper inside a printer</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                            <h4 class="font-semibold text-green-700 mb-2">Troubleshooting Tips</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <h5 class="font-medium text-gray-700 mb-1">Printer Issues</h5>
+                                    <ul class="list-disc pl-5 text-sm text-gray-700 space-y-1">
+                                        <li>Check if printer is turned on</li>
+                                        <li>Make sure paper is loaded</li>
+                                        <li>Check ink/toner levels</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="font-medium text-gray-700 mb-1">Scanner Issues</h5>
+                                    <ul class="list-disc pl-5 text-sm text-gray-700 space-y-1">
+                                        <li>Check scanner connection</li>
+                                        <li>Clean scanner glass</li>
+                                        <li>Restart scanning software</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                        <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            <i class="fas fa-arrow-left mr-2"></i> Back
+                        </button>
+                      <button class="finish-topic bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                            Finish Topic <i class="fas fa-check ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+                <!-- Routers & Wi-Fi Topic Slides -->
+                <div id="routers-topic" class="topic-slides">
+                    <!-- Router Slide 1: Introduction -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">Routers & Wi-Fi</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">1/4</span>
+                            </div>
+                            
+                            <div class="flex flex-col md:flex-row gap-6 mb-6">
+                                <div class="md:w-1/2">
+                                    <img src="https://images.unsplash.com/photo-1597764690525-15f5a0a8b2e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Wi-Fi Router" class="w-full h-auto rounded-lg shadow-md cursor-pointer hover:shadow-lg transition" id="routerImage">
+                                    <p class="text-sm text-gray-500 mt-2 text-center"><i class="fas fa-mouse-pointer mr-1"></i> Click the image to zoom</p>
+                                </div>
+                                <div class="md:w-1/2">
+                                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                                        <h3 class="font-semibold text-blue-700 mb-2">What is a Router?</h3>
+                                        <p class="text-gray-700">A router is a device that connects multiple networks and directs internet traffic between them.</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-4 rounded-lg">
+                                        <h3 class="font-semibold text-purple-700 mb-2">What is Wi-Fi?</h3>
+                                        <p class="text-gray-700">Wi-Fi is a wireless technology that uses radio waves to provide network connectivity.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <p class="text-gray-700 flex items-center">
+                                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                                    <span>Most homes use a combination modem/router that connects to the internet and broadcasts Wi-Fi.</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                            <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <!-- Router Slide 2: How They Work -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">How Routers & Wi-Fi Work</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">2/4</span>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm mb-6">
+                                    <h4 class="font-semibold text-gray-800 mb-3">Internet Connection Flow</h4>
+                                    <div class="flex flex-col items-center">
+                                        <div class="flex items-center justify-center w-full mb-4">
+                                            <div class="bg-blue-100 p-3 rounded-lg text-center mx-2">
+                                                <i class="fas fa-globe text-2xl text-blue-600 mb-1"></i>
+                                                <p class="text-sm">Internet</p>
+                                            </div>
+                                            <i class="fas fa-arrow-right text-gray-400 mx-2"></i>
+                                            <div class="bg-blue-100 p-3 rounded-lg text-center mx-2">
+                                                <i class="fas fa-modem text-2xl text-blue-600 mb-1"></i>
+                                                <p class="text-sm">Modem</p>
+                                            </div>
+                                            <i class="fas fa-arrow-right text-gray-400 mx-2"></i>
+                                            <div class="bg-blue-100 p-3 rounded-lg text-center mx-2">
+                                                <i class="fas fa-wifi text-2xl text-blue-600 mb-1"></i>
+                                                <p class="text-sm">Router</p>
+                                            </div>
+                                            <i class="fas fa-arrow-right text-gray-400 mx-2"></i>
+                                            <div class="bg-blue-100 p-3 rounded-lg text-center mx-2">
+                                                <i class="fas fa-laptop text-2xl text-blue-600 mb-1"></i>
+                                                <p class="text-sm">Your Device</p>
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-gray-600 text-center">Data travels from the internet through the modem, to the router, then to your devices via Wi-Fi or cable.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                    <h4 class="font-semibold text-yellow-700 mb-2">Key Components</h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <h5 class="font-medium text-gray-700 mb-1"><i class="fas fa-ethernet text-blue-500 mr-2"></i>Ethernet Ports</h5>
+                                            <p class="text-sm text-gray-600">For wired connections (faster and more stable)</p>
+                                        </div>
+                                        <div>
+                                            <h5 class="font-medium text-gray-700 mb-1"><i class="fas fa-antenna text-blue-500 mr-2"></i>Antennas</h5>
+                                            <p class="text-sm text-gray-600">Broadcast Wi-Fi signal in all directions</p>
+                                        </div>
+                                        <div>
+                                            <h5 class="font-medium text-gray-700 mb-1"><i class="fas fa-plug text-blue-500 mr-2"></i>Power Port</h5>
+                                            <p class="text-sm text-gray-600">Connects router to electricity</p>
+                                        </div>
+                                        <div>
+                                            <h5 class="font-medium text-gray-700 mb-1"><i class="fas fa-network-wired text-blue-500 mr-2"></i>WAN Port</h5>
+                                            <p class="text-sm text-gray-600">Connects to modem for internet access</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                            <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <!-- Router Slide 3: Set-Top Boxes -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">Set-Top Boxes</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">3/4</span>
+                            </div>
+                            
+                            <div class="flex flex-col md:flex-row gap-6 mb-6">
+                                <div class="md:w-1/2">
+                                    <img src="https://images.unsplash.com/photo-1592155931589-082d4afd87a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Set-Top Box" class="w-full h-auto rounded-lg shadow-md">
+                                    <p class="text-sm text-gray-500 mt-2 text-center">Modern set-top box with streaming capabilities</p>
+                                </div>
+                                <div class="md:w-1/2">
+                                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                                        <h3 class="font-semibold text-blue-700 mb-2">What is a Set-Top Box?</h3>
+                                        <p class="text-gray-700">A device that connects to a TV and external signal source, converting the signal into content for display.</p>
+                                    </div>
+                                    
+                                    <div class="bg-purple-50 p-4 rounded-lg">
+                                        <h3 class="font-semibold text-purple-700 mb-2">Types of Set-Top Boxes</h3>
+                                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                            <li><strong>Cable TV boxes:</strong> For traditional cable service</li>
+                                            <li><strong>Satellite receivers:</strong> For satellite TV service</li>
+                                            <li><strong>Digital converters:</strong> For over-the-air TV signals</li>
+                                            <li><strong>Streaming devices:</strong> Like Apple TV, Fire Stick</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                                <h4 class="font-semibold text-green-700 mb-2">How They Connect</h4>
+                                <div class="flex flex-wrap justify-center gap-4">
+                                    <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm text-center w-24">
+                                        <i class="fas fa-satellite-dish text-2xl text-blue-500 mb-1"></i>
+                                        <p class="text-xs">Satellite</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm text-center w-24">
+                                        <i class="fas fa-broadcast-tower text-2xl text-blue-500 mb-1"></i>
+                                        <p class="text-xs">Cable</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm text-center w-24">
+                                        <i class="fas fa-wifi text-2xl text-blue-500 mb-1"></i>
+                                        <p class="text-xs">Wi-Fi</p>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm text-center w-24">
+                                        <i class="fas fa-ethernet text-2xl text-blue-500 mb-1"></i>
+                                        <p class="text-xs">Ethernet</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                            <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <!-- Router Slide 4: Activity -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">Networking Activity</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">4/4</span>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200 mb-6">
+                                    <h3 class="font-semibold text-purple-700 mb-3">Label the Router</h3>
+                                    <p class="text-gray-700 mb-4">Drag the labels to the correct parts of the router:</p>
+                                    
+                                    <div class="flex flex-col md:flex-row gap-4">
+                                        <div class="flex-1">
+                                            <div class="relative bg-gray-100 p-4 rounded-lg">
+                                                <img src="https://www.svgrepo.com/show/530363/router.svg" alt="Router diagram" class="w-full h-48 object-contain">
+                                                
+                                                <!-- Drop zones would be positioned absolutely here in a real implementation -->
+                                                <div class="absolute top-1/4 left-1/4 drop-zone w-16 h-8" data-zone="wan-port"></div>
+                                                <div class="absolute top-1/3 right-1/4 drop-zone w-16 h-8" data-zone="ethernet"></div>
+                                                <div class="absolute top-1/2 left-1/2 drop-zone w-16 h-8" data-zone="power"></div>
+                                                <div class="absolute bottom-1/4 right-1/4 drop-zone w-16 h-8" data-zone="wifi"></div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex-1">
+                                            <div class="space-y-2">
+                                                <div class="drag-item bg-white p-3 rounded border border-gray-300 shadow-sm" draggable="true" data-item="wan-port">
+                                                    <div class="flex items-center">
+                                                        <i class="fas fa-grip-lines text-gray-400 mr-2"></i>
+                                                        <span>WAN Port</span>
+                                                    </div>
+                                                </div>
+                                                <div class="drag-item bg-white p-3 rounded border border-gray-300 shadow-sm" draggable="true" data-item="ethernet">
+                                                    <div class="flex items-center">
+                                                        <i class="fas fa-grip-lines text-gray-400 mr-2"></i>
+                                                        <span>Ethernet Port</span>
+                                                    </div>
+                                                </div>
+                                                <div class="drag-item bg-white p-3 rounded border border-gray-300 shadow-sm" draggable="true" data-item="power">
+                                                    <div class="flex items-center">
+                                                        <i class="fas fa-grip-lines text-gray-400 mr-2"></i>
+                                                        <span>Power Port</span>
+                                                    </div>
+                                                </div>
+                                                <div class="drag-item bg-white p-3 rounded border border-gray-300 shadow-sm" draggable="true" data-item="wifi">
+                                                    <div class="flex items-center">
+                                                        <i class="fas fa-grip-lines text-gray-400 mr-2"></i>
+                                                        <span>Wi-Fi Antenna</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                    <h3 class="font-semibold text-blue-700 mb-2">Multiple Choice Quiz</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <p class="font-medium text-gray-700 mb-2">1. What does a router do?</p>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="router-quiz1" class="mr-2" value="A">
+                                                    <span>A) Makes coffee</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="router-quiz1" class="mr-2" value="B" correct>
+                                                    <span>B) Directs internet traffic between networks</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="router-quiz1" class="mr-2" value="C">
+                                                    <span>C) Prints documents</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <p class="font-medium text-gray-700 mb-2">2. Which connection type is most stable?</p>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="router-quiz2" class="mr-2" value="A" correct>
+                                                    <span>A) Ethernet cable</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="router-quiz2" class="mr-2" value="B">
+                                                    <span>B) Wi-Fi</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="router-quiz2" class="mr-2" value="C">
+                                                    <span>C) Bluetooth</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                <h3 class="font-semibold text-yellow-700 mb-2">Reflection Question</h3>
+                                <p class="text-gray-700 mb-2">Why is it important to have a strong Wi-Fi password?</p>
+                                <textarea class="w-full p-2 border border-gray-300 rounded" rows="2" placeholder="Write your thoughts here..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                            <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button class="finish-topic bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                Finish Topic <i class="fas fa-check ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Websites & Search Engines Topic Slides -->
+                <div id="websites-topic" class="topic-slides">
+                    <!-- Website Slide 1: Introduction -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">Websites & Search Engines</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">1/4</span>
+                            </div>
+                            
+                            <div class="flex flex-col md:flex-row gap-6 mb-6">
+                                <div class="md:w-1/2">
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <i class="fas fa-globe text-4xl text-blue-500 mb-2"></i>
+                                            <h4 class="font-semibold text-gray-800">Website</h4>
+                                            <p class="text-sm text-gray-600">Collection of web pages under one domain</p>
+                                        </div>
+                                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <i class="fas fa-search text-4xl text-blue-500 mb-2"></i>
+                                            <h4 class="font-semibold text-gray-800">Search Engine</h4>
+                                            <p class="text-sm text-gray-600">Finds information on the web</p>
+                                        </div>
+                                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <i class="fas fa-server text-4xl text-blue-500 mb-2"></i>
+                                            <h4 class="font-semibold text-gray-800">Web Server</h4>
+                                            <p class="text-sm text-gray-600">Hosts website files</p>
+                                        </div>
+                                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <i class="fas fa-network-wired text-4xl text-blue-500 mb-2"></i>
+                                            <h4 class="font-semibold text-gray-800">ISP</h4>
+                                            <p class="text-sm text-gray-600">Internet Service Provider</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="md:w-1/2">
+                                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                                        <h3 class="font-semibold text-blue-700 mb-2">What is a Website?</h3>
+                                        <p class="text-gray-700">A website is a collection of web pages and related content identified by a common domain name and published on at least one web server.</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-4 rounded-lg">
+                                        <h3 class="font-semibold text-purple-700 mb-2">Popular Examples</h3>
+                                        <div class="flex flex-wrap gap-2">
+                                            <span class="bg-white px-3 py-1 rounded-full text-sm border border-gray-200">Google.com</span>
+                                            <span class="bg-white px-3 py-1 rounded-full text-sm border border-gray-200">Wikipedia.org</span>
+                                            <span class="bg-white px-3 py-1 rounded-full text-sm border border-gray-200">YouTube.com</span>
+                                            <span class="bg-white px-3 py-1 rounded-full text-sm border border-gray-200">Facebook.com</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <p class="text-gray-700 flex items-center">
+                                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                                    <span>The first website was published in 1991 by Tim Berners-Lee, the inventor of the World Wide Web.</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                            <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <!-- Website Slide 2: Search Engines -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">Search Engines</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">2/4</span>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm mb-6">
+                                    <h4 class="font-semibold text-gray-800 mb-3">How Search Engines Work</h4>
+                                    <div class="space-y-4">
+                                        <div class="flex items-start">
+                                            <div class="bg-blue-100 text-blue-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">1</div>
+                                            <div>
+                                                <h4 class="font-semibold text-gray-800">Crawling</h4>
+                                                <p class="text-gray-700 text-sm">Bots (called spiders) visit websites and follow links to discover pages.</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <div class="bg-blue-100 text-blue-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">2</div>
+                                            <div>
+                                                <h4 class="font-semibold text-gray-800">Indexing</h4>
+                                                <p class="text-gray-700 text-sm">Information from pages is stored in a massive database (the index).</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start">
+                                            <div class="bg-blue-100 text-blue-800 font-bold rounded-full w-8 h-8 flex items-center justify-center mr-4 flex-shrink-0">3</div>
+                                            <div>
+                                                <h4 class="font-semibold text-gray-800">Ranking</h4>
+                                                <p class="text-gray-700 text-sm">When you search, the engine finds matching pages and ranks them by relevance.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                    <h4 class="font-semibold text-yellow-700 mb-2">Popular Search Engines</h4>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <img src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" class="h-8 mx-auto mb-1">
+                                            <p class="text-xs text-gray-600">Google</p>
+                                        </div>
+                                        <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Bing_logo_%282016%29.svg/800px-Bing_logo_%282016%29.svg.png" class="h-8 mx-auto mb-1">
+                                            <p class="text-xs text-gray-600">Bing</p>
+                                        </div>
+                                        <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Yahoo%21_logo.svg/640px-Yahoo%21_logo.svg.png" class="h-8 mx-auto mb-1">
+                                            <p class="text-xs text-gray-600">Yahoo</p>
+                                        </div>
+                                        <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/DuckDuckGo_logo.svg/2048px-DuckDuckGo_logo.svg.png" class="h-8 mx-auto mb-1">
+                                            <p class="text-xs text-gray-600">DuckDuckGo</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                <h4 class="font-semibold text-blue-700 mb-2">Search Tips</h4>
+                                <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                    <li>Use quotes for exact phrases: "climate change"</li>
+                                    <li>Use minus to exclude words: jaguar -car</li>
+                                    <li>Use site: to search one site: site:wikipedia.org nepal</li>
+                                    <li>Use filetype: to find specific files: filetype:pdf</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                            <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <!-- Website Slide 3: ISPs -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">Internet Service Providers</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">3/4</span>
+                            </div>
+                            
+                            <div class="flex flex-col md:flex-row gap-6 mb-6">
+                                <div class="md:w-1/2">
+                                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                                        <h3 class="font-semibold text-blue-700 mb-2">What is an ISP?</h3>
+                                        <p class="text-gray-700">An Internet Service Provider (ISP) is a company that provides access to the internet.</p>
+                                    </div>
+                                    
+                                    <div class="bg-purple-50 p-4 rounded-lg">
+                                        <h3 class="font-semibold text-purple-700 mb-2">Types of Internet Connections</h3>
+                                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                            <li><strong>DSL:</strong> Uses phone lines</li>
+                                            <li><strong>Cable:</strong> Uses TV cable lines</li>
+                                            <li><strong>Fiber:</strong> Uses optical fiber (fastest)</li>
+                                            <li><strong>Satellite:</strong> For remote areas</li>
+                                            <li><strong>Mobile:</strong> 3G/4G/5G networks</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="md:w-1/2">
+                                    <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                        <h4 class="font-semibold text-gray-800 mb-3">ISPs in Nepal</h4>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div class="bg-gray-50 p-3 rounded text-center">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/WorldLink_Communications_Logo.svg/1200px-WorldLink_Communications_Logo.svg.png" class="h-8 mx-auto mb-1">
+                                                <p class="text-xs">WorldLink</p>
+                                            </div>
+                                            <div class="bg-gray-50 p-3 rounded text-center">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Vianet_Communications_Logo.svg/1200px-Vianet_Communications_Logo.svg.png" class="h-8 mx-auto mb-1">
+                                                <p class="text-xs">Vianet</p>
+                                            </div>
+                                            <div class="bg-gray-50 p-3 rounded text-center">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Subisu_Logo.svg/1200px-Subisu_Logo.svg.png" class="h-8 mx-auto mb-1">
+                                                <p class="text-xs">Subisu</p>
+                                            </div>
+                                            <div class="bg-gray-50 p-3 rounded text-center">
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Classic_Tech_Logo.svg/1200px-Classic_Tech_Logo.svg.png" class="h-8 mx-auto mb-1">
+                                                <p class="text-xs">Classic Tech</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                                <h4 class="font-semibold text-green-700 mb-2">Choosing an ISP</h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <h5 class="font-medium text-gray-700 mb-1">Considerations</h5>
+                                        <ul class="list-disc pl-5 text-sm text-gray-700 space-y-1">
+                                            <li>Speed requirements</li>
+                                            <li>Data limits</li>
+                                            <li>Price</li>
+                                            <li>Reliability</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h5 class="font-medium text-gray-700 mb-1">Typical Speeds</h5>
+                                        <ul class="list-disc pl-5 text-sm text-gray-700 space-y-1">
+                                            <li>Basic: 5-10 Mbps</li>
+                                            <li>Standard: 20-50 Mbps</li>
+                                            <li>Premium: 100+ Mbps</li>
+                                            <li>Fiber: 300 Mbps - 1 Gbps</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                            <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <!-- Website Slide 4: Activity -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">Web Activity</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">4/4</span>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200 mb-6">
+                                    <h3 class="font-semibold text-purple-700 mb-3">Website Components Matching</h3>
+                                    <p class="text-gray-700 mb-4">Match each website part to its correct description:</p>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="space-y-3">
+                                            <div class="option-card bg-white p-3 rounded-lg border border-gray-300 shadow-sm cursor-pointer" data-answer="1">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-font text-blue-500 mr-3"></i>
+                                                    <span>Domain Name</span>
+                                                </div>
+                                            </div>
+                                            <div class="option-card bg-white p-3 rounded-lg border border-gray-300 shadow-sm cursor-pointer" data-answer="2">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-file-alt text-blue-500 mr-3"></i>
+                                                    <span>Web Page</span>
+                                                </div>
+                                            </div>
+                                            <div class="option-card bg-white p-3 rounded-lg border border-gray-300 shadow-sm cursor-pointer" data-answer="3">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-server text-blue-500 mr-3"></i>
+                                                    <span>Web Host</span>
+                                                </div>
+                                            </div>
+                                            <div class="option-card bg-white p-3 rounded-lg border border-gray-300 shadow-sm cursor-pointer" data-answer="4">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-wifi text-blue-500 mr-3"></i>
+                                                    <span>ISP</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="space-y-3">
+                                            <div class="drop-zone bg-gray-100 p-3 rounded-lg border-2 border-dashed border-gray-300 min-h-12" data-answer="2">
+                                                <p class="text-gray-700">Single document that displays in a browser</p>
+                                            </div>
+                                            <div class="drop-zone bg-gray-100 p-3 rounded-lg border-2 border-dashed border-gray-300 min-h-12" data-answer="1">
+                                                <p class="text-gray-700">Human-readable website address (like google.com)</p>
+                                            </div>
+                                            <div class="drop-zone bg-gray-100 p-3 rounded-lg border-2 border-dashed border-gray-300 min-h-12" data-answer="4">
+                                                <p class="text-gray-700">Company that provides internet access</p>
+                                            </div>
+                                            <div class="drop-zone bg-gray-100 p-3 rounded-lg border-2 border-dashed border-gray-300 min-h-12" data-answer="3">
+                                                <p class="text-gray-700">Stores website files and makes them available online</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                    <h3 class="font-semibold text-blue-700 mb-2">Search Engine Challenge</h3>
+                                    <p class="text-gray-700 mb-3">Try these search queries and see what you find:</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div class="bg-white p-3 rounded border border-gray-200">
+                                            <p class="text-sm font-medium text-gray-700 mb-1">"history of nepal" site:edu</p>
+                                            <p class="text-xs text-gray-500">Finds educational resources</p>
+                                        </div>
+                                        <div class="bg-white p-3 rounded border border-gray-200">
+                                            <p class="text-sm font-medium text-gray-700 mb-1">weather kathmandu</p>
+                                            <p class="text-xs text-gray-500">Current weather info</p>
+                                        </div>
+                                        <div class="bg-white p-3 rounded border border-gray-200">
+                                            <p class="text-sm font-medium text-gray-700 mb-1">filetype:pdf mathematics grade 8</p>
+                                            <p class="text-xs text-gray-500">Finds PDF textbooks</p>
+                                        </div>
+                                        <div class="bg-white p-3 rounded border border-gray-200">
+                                            <p class="text-sm font-medium text-gray-700 mb-1">define:technology</p>
+                                            <p class="text-xs text-gray-500">Dictionary definition</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                <h3 class="font-semibold text-yellow-700 mb-2">Reflection</h3>
+                                <p class="text-gray-700 mb-2">How has the internet changed the way we find information compared to 20 years ago?</p>
+                                <textarea class="w-full p-2 border border-gray-300 rounded" rows="2" placeholder="Write your thoughts here..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                            <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button class="finish-topic bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                Finish Topic <i class="fas fa-check ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Social Networking Topic Slides -->
+                <div id="social-topic" class="topic-slides">
+                    <!-- Social Slide 1: Introduction -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">Social Networking</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">1/4</span>
+                            </div>
+                            
+                            <div class="flex flex-col md:flex-row gap-6 mb-6">
+                                <div class="md:w-1/2">
+                                    <div class="grid grid-cols-2 gap-4 mb-4">
+                                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <i class="fab fa-facebook text-4xl text-blue-600 mb-2"></i>
+                                            <h4 class="font-semibold text-gray-800">Facebook</h4>
+                                            <p class="text-xs text-gray-600">Connect with friends</p>
+                                        </div>
+                                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <i class="fab fa-instagram text-4xl text-pink-600 mb-2"></i>
+                                            <h4 class="font-semibold text-gray-800">Instagram</h4>
+                                            <p class="text-xs text-gray-600">Share photos & videos</p>
+                                        </div>
+                                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <i class="fab fa-twitter text-4xl text-blue-400 mb-2"></i>
+                                            <h4 class="font-semibold text-gray-800">Twitter</h4>
+                                            <p class="text-xs text-gray-600">Short messages</p>
+                                        </div>
+                                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <i class="fab fa-youtube text-4xl text-red-600 mb-2"></i>
+                                            <h4 class="font-semibold text-gray-800">YouTube</h4>
+                                            <p class="text-xs text-gray-600">Video sharing</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="md:w-1/2">
+                                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                                        <h3 class="font-semibold text-blue-700 mb-2">What is Social Media?</h3>
+                                        <p class="text-gray-700">Websites and applications that enable users to create and share content or to participate in social networking.</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-4 rounded-lg">
+                                        <h3 class="font-semibold text-purple-700 mb-2">Key Features</h3>
+                                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                            <li>User profiles</li>
+                                            <li>Friend/connection systems</li>
+                                            <li>Content sharing</li>
+                                            <li>Messaging</li>
+                                            <li>News feeds</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <p class="text-gray-700 flex items-center">
+                                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                                    <span>Over 4.8 billion people worldwide use social media - that's about 60% of the global population!</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                            <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <!-- Social Slide 2: Advantages -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">Advantages of Social Media</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">2/4</span>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                                        <h4 class="font-semibold text-green-700 mb-2"><i class="fas fa-users mr-2"></i>Connection</h4>
+                                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                            <li>Stay in touch with friends and family</li>
+                                            <li>Connect with people worldwide</li>
+                                            <li>Find people with similar interests</li>
+                                        </ul>
+                                    </div>
+                                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                        <h4 class="font-semibold text-blue-700 mb-2"><i class="fas fa-graduation-cap mr-2"></i>Education</h4>
+                                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                            <li>Access to educational content</li>
+                                            <li>Join study groups</li>
+                                            <li>Follow experts in various fields</li>
+                                        </ul>
+                                    </div>
+                                    <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                                        <h4 class="font-semibold text-purple-700 mb-2"><i class="fas fa-bullhorn mr-2"></i>Awareness</h4>
+                                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                            <li>Learn about current events</li>
+                                            <li>Raise awareness for causes</li>
+                                            <li>Get news quickly</li>
+                                        </ul>
+                                    </div>
+                                    <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                        <h4 class="font-semibold text-yellow-700 mb-2"><i class="fas fa-briefcase mr-2"></i>Opportunities</h4>
+                                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                            <li>Showcase talents</li>
+                                            <li>Find job opportunities</li>
+                                            <li>Promote businesses</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Positive Uses</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Fundraising</span>
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Skill Sharing</span>
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Support Groups</span>
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Creative Expression</span>
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Cultural Exchange</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                            <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <!-- Social Slide 3: Disadvantages -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">Disadvantages of Social Media</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">3/4</span>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                                        <h4 class="font-semibold text-red-700 mb-2"><i class="fas fa-user-secret mr-2"></i>Privacy Risks</h4>
+                                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                            <li>Personal information exposure</li>
+                                            <li>Data collection by companies</li>
+                                            <li>Location tracking</li>
+                                        </ul>
+                                    </div>
+                                    <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                                        <h4 class="font-semibold text-orange-700 mb-2"><i class="fas fa-bullseye mr-2"></i>Cyberbullying</h4>
+                                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                            <li>Harassment online</li>
+                                            <li>Spread of rumors</li>
+                                            <li>Exclusion from groups</li>
+                                        </ul>
+                                    </div>
+                                    <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                        <h4 class="font-semibold text-yellow-700 mb-2"><i class="fas fa-clock mr-2"></i>Time Wasting</h4>
+                                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                            <li>Endless scrolling</li>
+                                            <li>Reduced productivity</li>
+                                            <li>Less face-to-face interaction</li>
+                                        </ul>
+                                    </div>
+                                    <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                                        <h4 class="font-semibold text-purple-700 mb-2"><i class="fas fa-fake-news mr-2"></i>Misinformation</h4>
+                                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                            <li>Spread of fake news</li>
+                                            <li>Echo chambers</li>
+                                            <li>Manipulation</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Negative Effects</h4>
+                                    <div class="flex flex-wrap gap-2">
+                                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Addiction</span>
+                                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Anxiety</span>
+                                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Sleep Problems</span>
+                                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Body Image Issues</span>
+                                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">FOMO (Fear of Missing Out)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                <h4 class="font-semibold text-blue-700 mb-2">Safety Tips</h4>
+                                <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                    <li>Use strong, unique passwords</li>
+                                    <li>Adjust privacy settings</li>
+                                    <li>Be careful what you share</li>
+                                    <li>Think before you post</li>
+                                    <li>Limit personal information</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                            <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <!-- Social Slide 4: Activity -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">Social Media Activity</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">4/4</span>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200 mb-6">
+                                    <h3 class="font-semibold text-purple-700 mb-3">Scenario Challenge</h3>
+                                    <p class="text-gray-700 mb-4">What would you do in these situations?</p>
+                                    
+                                    <div class="space-y-4">
+                                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                            <p class="font-medium text-gray-700 mb-2">1. Someone you don't know sends you a friend request. What do you do?</p>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="scenario1" class="mr-2" value="A">
+                                                    <span>A) Accept immediately</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="scenario1" class="mr-2" value="B">
+                                                    <span>B) Check their profile first, then decide</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="scenario1" class="mr-2" value="C" correct>
+                                                    <span>C) Ignore if you don't know them</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                            <p class="font-medium text-gray-700 mb-2">2. You see a post that makes you angry. How do you respond?</p>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="scenario2" class="mr-2" value="A">
+                                                    <span>A) Post angry comments immediately</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="scenario2" class="mr-2" value="B" correct>
+                                                    <span>B) Take time to calm down before responding</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="scenario2" class="mr-2" value="C">
+                                                    <span>C) Share it to shame the person</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                                            <p class="font-medium text-gray-700 mb-2">3. A friend tags you in an embarrassing photo. What do you do?</p>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="scenario3" class="mr-2" value="A" correct>
+                                                    <span>A) Politely ask them to remove the tag</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="scenario3" class="mr-2" value="B">
+                                                    <span>B) Tag them in worse photos as revenge</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="scenario3" class="mr-2" value="C">
+                                                    <span>C) Do nothing and feel bad about it</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                    <h3 class="font-semibold text-blue-700 mb-2">Pros and Cons Sorting</h3>
+                                    <p class="text-gray-700 mb-3">Drag each statement to the correct category:</p>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="space-y-2">
+                                            <h4 class="font-medium text-gray-700">Statements:</h4>
+                                            <div class="drag-item bg-white p-3 rounded border border-gray-300 shadow-sm" draggable="true" data-item="pro1">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-grip-lines text-gray-400 mr-2"></i>
+                                                    <span>Helps with school projects</span>
+                                                </div>
+                                            </div>
+                                            <div class="drag-item bg-white p-3 rounded border border-gray-300 shadow-sm" draggable="true" data-item="con1">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-grip-lines text-gray-400 mr-2"></i>
+                                                    <span>Can be addictive</span>
+                                                </div>
+                                            </div>
+                                            <div class="drag-item bg-white p-3 rounded border border-gray-300 shadow-sm" draggable="true" data-item="pro2">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-grip-lines text-gray-400 mr-2"></i>
+                                                    <span>Connects with distant family</span>
+                                                </div>
+                                            </div>
+                                            <div class="drag-item bg-white p-3 rounded border border-gray-300 shadow-sm" draggable="true" data-item="con2">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-grip-lines text-gray-400 mr-2"></i>
+                                                    <span>Spreads fake news quickly</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <div class="grid grid-cols-2 gap-2 mb-3">
+                                                <div class="drop-zone bg-green-100 p-3 rounded border-2 border-dashed border-green-300 text-center" data-zone="pros">
+                                                    <h4 class="font-medium text-green-800">Pros</h4>
+                                                    <p class="text-sm text-gray-500">Drop here</p>
+                                                </div>
+                                                <div class="drop-zone bg-red-100 p-3 rounded border-2 border-dashed border-red-300 text-center" data-zone="cons">
+                                                    <h4 class="font-medium text-red-800">Cons</h4>
+                                                    <p class="text-sm text-gray-500">Drop here</p>
+                                                </div>
+                                            </div>
+                                            <div class="bg-gray-100 p-3 rounded text-center">
+                                                <p class="text-sm text-gray-600">Drag statements to the correct category above</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                <h3 class="font-semibold text-yellow-700 mb-2">Reflection</h3>
+                                <p class="text-gray-700 mb-2">How can you balance the benefits and risks of social media in your life?</p>
+                                <textarea class="w-full p-2 border border-gray-300 rounded" rows="2" placeholder="Write your thoughts here..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                            <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button class="finish-topic bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                Finish Topic <i class="fas fa-check ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Blogs Topic Slides -->
+                <div id="blogs-topic" class="topic-slides">
+                    <!-- Blog Slide 1: Introduction -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">Blogs</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">1/4</span>
+                            </div>
+                            
+                            <div class="flex flex-col md:flex-row gap-6 mb-6">
+                                <div class="md:w-1/2">
+                                    <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80" alt="Blogging" class="w-full h-auto rounded-lg shadow-md">
+                                    <p class="text-sm text-gray-500 mt-2 text-center">People sharing ideas through blogs</p>
+                                </div>
+                                <div class="md:w-1/2">
+                                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                                        <h3 class="font-semibold text-blue-700 mb-2">What is a Blog?</h3>
+                                        <p class="text-gray-700">A blog is a regularly updated website or web page, typically run by an individual or small group, that is written in an informal or conversational style.</p>
+                                    </div>
+                                    <div class="bg-purple-50 p-4 rounded-lg">
+                                        <h3 class="font-semibold text-purple-700 mb-2">Common Blog Types</h3>
+                                        <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                                            <li>Personal blogs</li>
+                                            <li>Travel blogs</li>
+                                            <li>Food blogs</li>
+                                            <li>Educational blogs</li>
+                                            <li>News blogs</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                <p class="text-gray-700 flex items-center">
+                                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                                    <span>The word "blog" comes from "weblog" - a log of information on the web!</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-100 px-6 py-4 flex justify-between items-center">
+                            <button class="prev-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                <i class="fas fa-arrow-left mr-2"></i> Back
+                            </button>
+                            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center transition">
+                                Next <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <!-- Blog Slide 2: Creating a Blog -->
+                    <div class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-2xl font-bold text-blue-600">Creating a Blog</h2>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">2/4</span>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm mb-6">
+                                    <h4 class="font-semibold text-gray-800 mb-3">Steps to Start a Blog</h4>
+                                    <ol class="list-decimal pl-5 space-y-2 text-gray-700">
+                                        <li><strong>Choose a topic:</strong> What will you write about?</li>
+                                        <li><strong>Pick a platform:</strong> Blogger, WordPress, Wix, etc.</li>
+                                        <li><strong>Select a domain name:</strong> Your blog's web address</li>
+                                        <li><strong>Design your blog:</strong> Choose a template and layout</li>
+                                        <li><strong>Write your first post:</strong> Share your thoughts!</li>
+                                        <li><strong>Publish and share:</strong> Let people know about it</li>
+                                    </ol>
+                                </div>
+                                
+                                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                    <h4 class="font-semibold text-yellow-700 mb-2">Popular Blogging Platforms</h4>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/WordPress_Blue_logo.png/768px-WordPress_Blue_logo.png" class="h-8 mx-auto mb-1">
+                                            <p class="text-xs text-gray-600">WordPress</p>
+                                        </div>
+                                        <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm text-center">
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/768px-Google_%22G%22_Logo.svg.png" class="h-8 mx-auto mb-1">
+                                            <p class="text-xs text-gray-600">Blogger</p>
+                                        </div>
+                                    </div>
+                                 </div>
+                             </div>
+                                       
+            <!-- More topic slides would follow the same pattern for other topics... -->
+
+            <!-- Completion Screen -->
+            <div id="completion" class="slide max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-8 text-center">
+                <div class="animate-bounce mb-8">
+                    <i class="fas fa-trophy text-yellow-500 text-6xl"></i>
+                </div>
+                <h1 class="text-4xl font-bold text-blue-600 mb-6">Great Job!</h1>
+                <p class="text-lg text-gray-700 mb-8">You've completed this ICT learning module. We hope you enjoyed exploring these technology concepts!</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                    <div class="bg-blue-50 p-6 rounded-lg border border-blue-100">
+                        <i class="fas fa-star text-blue-500 text-3xl mb-3"></i>
+                        <h3 class="font-bold text-blue-600 mb-2">What You Learned</h3>
+                        <p class="text-gray-700">Key concepts about modern ICT devices and technologies through interactive activities.</p>
+                    </div>
+                    <div class="bg-purple-50 p-6 rounded-lg border border-purple-100">
+                        <i class="fas fa-arrow-right text-purple-500 text-3xl mb-3"></i>
+                        <h3 class="font-bold text-purple-600 mb-2">Next Steps</h3>
+                        <p class="text-gray-700">Try another module or practice what you've learned in real life!</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col md:flex-row justify-center gap-4">
+                    <button id="restartLearning" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full transition">
+                        Start Over <i class="fas fa-redo ml-2"></i>
+                    </button>
+                    <button id="selectNewTopic" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full transition">
+                        Choose New Topic <i class="fas fa-book-open ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Help & Instructions</h3>
+                <button id="closeHelpModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-4 text-gray-700">
+                <div>
+                    <h4 class="font-semibold text-blue-600 mb-2">Navigation</h4>
+                    <p>Use the "Next" and "Back" buttons to move between slides. You can also select topics from the sidebar menu.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-blue-600 mb-2">Interactive Elements</h4>
+                    <p>Look for elements you can click, drag, or interact with. These will help you learn through hands-on activities.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-blue-600 mb-2">Audio</h4>
+                    <p>Toggle audio on/off using the button in the sidebar. Audio will read text aloud when available.</p>
+                </div>
+            </div>
+            <div class="mt-6">
+                <button id="gotItBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full transition">
+                    Got It!
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const sidebar = document.getElementById('sidebar');
+            const toggleSidebar = document.getElementById('toggleSidebar');
+            const closeSidebar = document.getElementById('closeSidebar');
+            const slides = document.querySelectorAll('.slide');
+            const topicSlides = document.querySelectorAll('.topic-slides');
+            const topicLinks = document.querySelectorAll('.topic-link');
+            const nextButtons = document.querySelectorAll('.next-btn');
+            const prevButtons = document.querySelectorAll('.prev-btn');
+            const finishTopicButtons = document.querySelectorAll('.finish-topic');
+            const startLearningBtn = document.getElementById('startLearning');
+            const restartLearningBtn = document.getElementById('restartLearning');
+            const selectNewTopicBtn = document.getElementById('selectNewTopic');
+            const currentTopicSpan = document.getElementById('currentTopic');
+            const progressBar = document.getElementById('progressBar');
+            const helpBtn = document.getElementById('helpBtn');
+            const helpModal = document.getElementById('helpModal');
+            const closeHelpModal = document.getElementById('closeHelpModal');
+            const gotItBtn = document.getElementById('gotItBtn');
+            const toggleAudioBtn = document.getElementById('toggleAudio');
+            
+            // Variables
+            let currentSlide = 0;
+            let currentTopic = null;
+            let audioEnabled = true;
+            
+            // Initialize
+            showSlide(0);
+            
+            // Event Listeners
+            toggleSidebar.addEventListener('click', () => {
+                sidebar.classList.toggle('-translate-x-64');
+            });
+            
+            closeSidebar.addEventListener('click', () => {
+                sidebar.classList.add('-translate-x-64');
+            });
+            
+            startLearningBtn.addEventListener('click', () => {
+                showTopic('atm');
+            });
+            
+            restartLearningBtn.addEventListener('click', () => {
+                showSlide(0);
+                currentTopic = null;
+                updateProgressBar();
+                updateCurrentTopicDisplay();
+            });
+            
+            selectNewTopicBtn.addEventListener('click', () => {
+                sidebar.classList.remove('-translate-x-64');
+            });
+            
+            topicLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const topic = link.getAttribute('data-topic');
+                    showTopic(topic);
+                    sidebar.classList.add('-translate-x-64');
+                });
+            });
+            
+            nextButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const topicSlidesContainer = button.closest('.topic-slides');
+                    const topicSlidesArray = Array.from(topicSlidesContainer.querySelectorAll('.slide'));
+                    const currentIndex = topicSlidesArray.indexOf(document.querySelector(`#${topicSlidesContainer.id} .slide.active`));
+                    
+                    if (currentIndex < topicSlidesArray.length - 1) {
+                        hideAllSlides(topicSlidesContainer);
+                        topicSlidesArray[currentIndex + 1].classList.add('active');
+                        updateProgressBar();
+                    }
+                });
+            });
+            
+            prevButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const topicSlidesContainer = button.closest('.topic-slides');
+                    const topicSlidesArray = Array.from(topicSlidesContainer.querySelectorAll('.slide'));
+                    const currentIndex = topicSlidesArray.indexOf(document.querySelector(`#${topicSlidesContainer.id} .slide.active`));
+                    
+                    if (currentIndex > 0) {
+                        hideAllSlides(topicSlidesContainer);
+                        topicSlidesArray[currentIndex - 1].classList.add('active');
+                        updateProgressBar();
+                    }
+                });
+            });
+            
+            finishTopicButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    document.getElementById('completion').classList.add('active');
+                    hideAllSlides();
+                    updateProgressBar();
+                });
+            });
+            
+            helpBtn.addEventListener('click', () => {
+                helpModal.classList.remove('hidden');
+            });
+            
+            closeHelpModal.addEventListener('click', () => {
+                helpModal.classList.add('hidden');
+            });
+            
+            gotItBtn.addEventListener('click', () => {
+                helpModal.classList.add('hidden');
+            });
+            
+            toggleAudioBtn.addEventListener('click', () => {
+                audioEnabled = !audioEnabled;
+                if (audioEnabled) {
+                    toggleAudioBtn.innerHTML = '<i class="fas fa-volume-up"></i> <span>Audio On</span>';
+                    // In a real implementation, we would enable audio here
+                } else {
+                    toggleAudioBtn.innerHTML = '<i class="fas fa-volume-mute"></i> <span>Audio Off</span>';
+                    // In a real implementation, we would disable audio here
+                }
+            });
+            
+            // Drag and drop functionality for activities
+            const dragItems = document.querySelectorAll('.drag-item');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            
+            dragItems.forEach(item => {
+                item.addEventListener('dragstart', dragStart);
+            });
+            
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', dragOver);
+                zone.addEventListener('dragleave', dragLeave);
+                zone.addEventListener('drop', drop);
+            });
+            
+            // Flip card interaction
+            const flipCards = document.querySelectorAll('.flip-card');
+            flipCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('flipped');
+                });
+            });
+            
+            // Option card matching
+            const optionCards = document.querySelectorAll('.option-card');
+            optionCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // In a full implementation, this would handle matching logic
+                    this.classList.add('bg-green-100', 'border-green-400');
+                });
+            });
+            
+            // Functions
+            function showSlide(index) {
+                hideAllSlides();
+                slides[index].classList.add('active');
+                currentSlide = index;
+            }
+            
+            function hideAllSlides(container = document) {
+                const slidesToHide = container.querySelectorAll('.slide');
+                slidesToHide.forEach(slide => {
+                    slide.classList.remove('active');
+                });
+            }
+            
+            function showTopic(topic) {
+                // Hide all topic slides and welcome slide
+                topicSlides.forEach(slide => {
+                    slide.style.display = 'none';
+                });
+                document.getElementById('welcome').classList.remove('active');
+                
+                // Show the selected topic's first slide
+                const topicSlide = document.getElementById(`${topic}-topic`);
+                topicSlide.style.display = 'block';
+                const firstSlide = topicSlide.querySelector('.slide');
+                firstSlide.classList.add('active');
+                
+                currentTopic = topic;
+                updateCurrentTopicDisplay();
+                updateProgressBar();
+            }
+            
+            function updateCurrentTopicDisplay() {
+                if (!currentTopic) {
+                    currentTopicSpan.textContent = 'Select a topic';
+                    return;
+                }
+                
+                const topicNames = {
+                    'atm': 'ATM Machines',
+                    'printers': 'Printers & Scanners',
+                    'routers': 'Routers & Wi-Fi',
+                    'websites': 'Websites & Search Engines',
+                    'social': 'Social Networking',
+                    'blogs': 'Blogs',
+                    'ai': 'AI & Cloud Computing',
+                    'robotics': 'Robotics & VR',
+                    'cyber': 'Cybersecurity'
+                };
+                
+                currentTopicSpan.textContent = topicNames[currentTopic] || 'Current Topic';
+            }
+            
+            function updateProgressBar() {
+                if (!currentTopic) {
+                    progressBar.style.width = '0%';
+                    return;
+                }
+                
+                const topicSlideContainer = document.getElementById(`${currentTopic}-topic`);
+                const slidesInTopic = topicSlideContainer.querySelectorAll('.slide');
+                const activeSlide = topicSlideContainer.querySelector('.slide.active');
+                const activeIndex = Array.from(slidesInTopic).indexOf(activeSlide);
+                const progressPercentage = ((activeIndex + 1) / slidesInTopic.length) * 100;
+                
+                progressBar.style.width = `${progressPercentage}%`;
+            }
+            
+            // Drag and drop functions
+            function dragStart(e) {
+                e.dataTransfer.setData('text/plain', e.target.dataset.item);
+                setTimeout(() => {
+                    e.target.classList.add('opacity-50');
+                }, 0);
+            }
+            
+            function dragOver(e) {
+                e.preventDefault();
+                this.classList.add('highlight');
+            }
+            
+            function dragLeave() {
+                this.classList.remove('highlight');
+            }
+            
+            function drop(e) {
+                e.preventDefault();
+                this.classList.remove('highlight');
+                
+                const draggedItemId = e.dataTransfer.getData('text/plain');
+                const dropZoneId = this.dataset.zone;
+                
+                // In a real implementation, we would check if the match is correct
+                if (draggedItemId === dropZoneId) {
+                    this.innerHTML = `
+                        <div class="bg-green-100 p-3 rounded border border-green-300">
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-check text-green-600 mr-2"></i>
+                                <span>Correct! ${draggedItemId.replace('-', ' ')}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    this.innerHTML = `
+                        <div class="bg-red-100 p-3 rounded border border-red-300">
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-times text-red-600 mr-2"></i>
+                                <span>Try again!</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Reset dragged item
+                document.querySelector(`.drag-item[data-item="${draggedItemId}"]`).classList.remove('opacity-50');
+            }
+            
+            // Tooltip functionality
+            const tooltips = document.querySelectorAll('.tooltip');
+            tooltips.forEach(tooltip => {
+                tooltip.addEventListener('mouseenter', function() {
+                    const tooltipText = this.querySelector('.tooltip-text');
+                    tooltipText.style.opacity = '1';
+                    tooltipText.style.visibility = 'visible';
+                });
+                
+                tooltip.addEventListener('mouseleave', function() {
+                    const tooltipText = this.querySelector('.tooltip-text');
+                    tooltipText.style.opacity = '0';
+                    tooltipText.style.visibility = 'hidden';
+                });
+            });
+            
+            // Step buttons for ATM process
+            const stepButtons = document.querySelectorAll('.step-btn');
+            stepButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // In a full implementation, this would highlight the corresponding step
+                    stepButtons.forEach(btn => btn.classList.remove('bg-blue-200', 'font-bold'));
+                    this.classList.add('bg-blue-200', 'font-bold');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
