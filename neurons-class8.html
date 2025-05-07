@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neurons Explained - Brain Building Blocks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .neuron-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: dash 5s linear forwards;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: 0; }
+        }
+        .tab-content { display: none; }
+        .tab-content.active { 
+            display: block; 
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .part-highlight {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-blue-50 font-sans">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0 text-center md:text-left">
+                    <h1 class="text-3xl font-bold">Neurons Explained</h1>
+                    <p class="text-blue-200">Your Brain's Tiny Messengers</p>
+                </div>
+                <div class="flex space-x-4">
+                    <button id="darkModeToggle" class="p-2 rounded-full bg-blue-700 hover:bg-blue-800">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button id="audioToggle" class="p-2 rounded-full bg-blue-700 hover:bg-blue-800">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap justify-center border-b border-gray-300 mb-8">
+            <button class="tab-btn active px-4 py-2 font-medium text-blue-700 border-b-2 border-blue-700" data-tab="intro">Intro</button>
+            <button class="tab-btn px-4 py-2 font-medium text-gray-600 hover:text-blue-600" data-tab="parts">Parts</button>
+            <button class="tab-btn px-4 py-2 font-medium text-gray-600 hover:text-blue-600" data-tab="work">How They Work</button>
+            <button class="tab-btn px-4 py-2 font-medium text-gray-600 hover:text-blue-600" data-tab="types">Types</button>
+            <button class="tab-btn px-4 py-2 font-medium text-gray-600 hover:text-blue-600" data-tab="funfacts">Fun Facts</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-content-container bg-white rounded-lg shadow-lg p-6">
+            <!-- Introduction Tab -->
+            <div id="intro" class="tab-content active">
+                <div class="flex flex-col lg:flex-row gap-8 items-center">
+                    <div class="lg:w-1/2">
+                        <h2 class="text-2xl font-bold text-blue-700 mb-4">What Are Neurons?</h2>
+                        <p class="text-gray-700 mb-4">Neurons, also known as nerve cells, are the fundamental units of the nervous system that plays a crucial role in transmitting information throughout the body via electrical and chemical signals. Neurons are special cells that act like tiny wires in your brain and nervous system. They send messages all over your body to help you think, move, and feel!</p>
+                        <div class="bg-blue-100 p-4 rounded-lg mb-6 border-l-4 border-blue-500">
+                            <h4 class="font-bold text-blue-700 mb-2"><i class="fas fa-brain mr-2"></i>Did You Know?</h4>
+                            <p class="text-gray-700">Your brain has about 86 billion neurons - that's more than all the stars in our Milky Way galaxy!</p>
+                        </div>
+                        
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button class="play-video-btn bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded flex items-center justify-center">
+                                <i class="fas fa-play mr-2"></i> Watch Video
+                            </button>
+                           
+                        </div>
+                    </div>
+                    <div class="lg:w-1/2 mt-6 lg:mt-0">
+                        <img src="https://cdn1.byjus.com/wp-content/uploads/2020/02/STRUCTURE-OF-NEURON.png" alt="Neuron diagram" class="w-full h-auto rounded-lg shadow">
+                        <p class="text-center text-sm text-gray-500 mt-2">A typical neuron with all its parts labeled</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parts of a Neuron Tab -->
+            <div id="parts" class="tab-content">
+                <h2 class="text-2xl font-bold text-blue-700 mb-6">Parts of a Neuron</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <div class="relative bg-gray-100 p-4 rounded-lg">
+                            <svg width="100%" height="300" viewBox="0 0 500 300" class="mx-auto">
+                                <!-- Dendrites -->
+                                <path id="svg-dendrites" d="M150,150 L100,100 M150,150 L100,150 M150,150 L100,200" stroke="#10B981" stroke-width="3" fill="none" />
+                                <circle cx="100" cy="100" r="5" fill="#10B981" />
+                                <circle cx="100" cy="150" r="5" fill="#10B981" />
+                                <circle cx="100" cy="200" r="5" fill="#10B981" />
+                                
+                                <!-- Cell Body -->
+                                <circle id="svg-cellbody" cx="200" cy="150" r="40" fill="#F59E0B" stroke="#D97706" stroke-width="2" />
+                                <circle cx="200" cy="150" r="15" fill="#EF4444" />
+                                
+                                <!-- Axon -->
+                                <path id="svg-axon" d="M240,150 L350,150 L400,120 L350,180 L240,180" stroke="#4F46E5" stroke-width="3" fill="none" />
+                                <path d="M400,120 L450,120 M400,180 L450,180" stroke="#4F46E5" stroke-width="3" fill="none" />
+                                <circle cx="450" cy="120" r="5" fill="#4F46E5" />
+                                <circle cx="450" cy="180" r="5" fill="#4F46E5" />
+                                
+                                <!-- Labels -->
+                                <text x="70" y="90" class="text-xs font-bold fill-gray-700">Dendrites</text>
+                                <text x="200" y="100" class="text-xs font-bold fill-gray-700">Cell Body</text>
+                                <text x="300" y="140" class="text-xs font-bold fill-gray-700">Axon</text>
+                                <text x="430" y="110" class="text-xs font-bold fill-gray-700">Terminals</text>
+                            </svg>
+                            
+                            <div class="flex flex-wrap justify-center gap-2 mt-4">
+                                <button data-part="dendrites" class="part-btn px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-sm">Dendrites</button>
+                                <button data-part="cellbody" class="part-btn px-3 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded text-sm">Cell Body</button>
+                                <button data-part="axon" class="part-btn px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm">Axon</button>
+                                <button id="reset-highlight" class="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white rounded text-sm">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="part-info bg-white p-4 rounded-lg border border-gray-200 shadow-sm" data-part="dendrites">
+                            <h3 class="font-bold text-lg text-green-600 mb-2"><i class="fas fa-tree mr-2"></i>Dendrites</h3>
+                            <p class="text-gray-700">These are like tree branches that receive messages from other neurons. The more dendrites a neuron has, the more connections it can make!</p>
+                            <div class="mt-2 flex items-center text-sm text-green-600">
+                                <i class="fas fa-lightbulb mr-2"></i>
+                                <span>Think of them like antennas picking up signals</span>
+                            </div>
+                        </div>
+                        
+                        <div class="part-info bg-white p-4 rounded-lg border border-gray-200 shadow-sm" data-part="cellbody">
+                            <h3 class="font-bold text-lg text-yellow-600 mb-2"><i class="fas fa-circle mr-2"></i>Cell Body (Soma)</h3>
+                            <p class="text-gray-700">This is the neuron's control center. It contains the nucleus (with DNA) and decides whether to pass along messages it receives.</p>
+                            <div class="mt-2 flex items-center text-sm text-yellow-600">
+                                <i class="fas fa-lightbulb mr-2"></i>
+                                <span>Like the main office of a business</span>
+                            </div>
+                        </div>
+                        
+                        <div class="part-info bg-white p-4 rounded-lg border border-gray-200 shadow-sm" data-part="axon">
+                            <h3 class="font-bold text-lg text-blue-600 mb-2"><i class="fas fa-bolt mr-2"></i>Axon</h3>
+                            <p class="text-gray-700">This long cable sends electrical signals away from the cell body. Some axons are wrapped in myelin (like insulation on wires) to make signals faster!</p>
+                            <div class="mt-2 flex items-center text-sm text-blue-600">
+                                <i class="fas fa-lightbulb mr-2"></i>
+                                <span>Like a highway for electrical messages</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How Neurons Work Tab -->
+            <div id="work" class="tab-content">
+                <h2 class="text-2xl font-bold text-blue-700 mb-6">How Neurons Communicate</h2>
+                
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <div class="lg:w-1/2">
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm mb-6">
+                            <h3 class="font-bold text-lg text-purple-600 mb-3"><i class="fas fa-comments mr-2"></i>The Synapse</h3>
+                            <img src="https://cdn.kastatic.org/ka-perseus-images/b404bfc9d6246ff3475f6fd2b34fbb7374fc4873.png" alt="Synapse diagram" class="w-full h-auto rounded mb-3">
+                            <p class="text-gray-700">Neurons don't actually touch! They communicate across tiny gaps called synapses using chemicals called neurotransmitters.</p>
+                        </div>
+                        
+                        <div class="bg-blue-100 p-4 rounded-lg">
+                            <h4 class="font-bold text-blue-700 mb-2"><i class="fas fa-flask mr-2"></i>3-Step Communication</h4>
+                            <div class="space-y-3">
+                                <div class="flex items-start bg-white p-3 rounded">
+                                    <div class="bg-purple-100 p-2 rounded-full mr-3">
+                                        <span class="font-bold text-purple-700">1</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-700">Electrical signal (action potential) travels down the axon</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start bg-white p-3 rounded">
+                                    <div class="bg-purple-100 p-2 rounded-full mr-3">
+                                        <span class="font-bold text-purple-700">2</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-700">Chemicals (neurotransmitters) are released into the synapse</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start bg-white p-3 rounded">
+                                    <div class="bg-purple-100 p-2 rounded-full mr-3">
+                                        <span class="font-bold text-purple-700">3</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-700">Next neuron's dendrites receive the chemicals and start a new signal</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:w-1/2">
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+                            <h3 class="font-bold text-lg text-blue-600 mb-3"><i class="fas fa-bolt mr-2"></i>Action Potential</h3>
+                            <div class="relative bg-gray-100 rounded-lg h-48 mb-3 flex items-center justify-center">
+                                <div class="w-4/5 h-2 bg-gray-300 rounded-full relative overflow-hidden">
+                                    <div id="actionPotential" class="absolute h-full bg-blue-500 rounded-full" style="width: 0%; left: 0;"></div>
+                                </div>
+                                <div class="absolute bottom-4 left-0 right-0 text-center">
+                                    <button id="playActionPotential" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
+                                        <i class="fas fa-play mr-2"></i> Show Signal
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="text-gray-700">This is the "electric message" that shoots down the axon at speeds up to 268 mph! It's like a wave at a sports stadium - one section activates the next.</p>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm mt-6">
+                            <h3 class="font-bold text-lg text-green-600 mb-3"><i class="fas fa-puzzle-piece mr-2"></i>Examples of Neurotransmitters</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-green-50 p-3 rounded border border-green-100">
+                                    <div class="flex items-center mb-1">
+                                        <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                                        <span class="font-medium">Dopamine</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600">Reward & motivation</p>
+                                </div>
+                                <div class="bg-blue-50 p-3 rounded border border-blue-100">
+                                    <div class="flex items-center mb-1">
+                                        <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                                        <span class="font-medium">Serotonin</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600">Mood & happiness</p>
+                                </div>
+                                <div class="bg-purple-50 p-3 rounded border border-purple-100">
+                                    <div class="flex items-center mb-1">
+                                        <div class="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+                                        <span class="font-medium">GABA</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600">Calms the brain</p>
+                                </div>
+                                <div class="bg-yellow-50 p-3 rounded border border-yellow-100">
+                                    <div class="flex items-center mb-1">
+                                        <div class="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
+                                        <span class="font-medium">Glutamate</span>
+                                    </div>
+                                    <p class="text-xs text-gray-600">Learning & memory</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Types of Neurons Tab -->
+            <div id="types" class="tab-content">
+                <h2 class="text-2xl font-bold text-blue-700 mb-6">Different Types of Neurons</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-hand-paper text-red-500 text-4xl"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-red-600 mb-2">Sensory Neurons</h3>
+                        <p class="text-gray-700 mb-3">Carry messages from your senses (touch, sight, smell, etc.) to your brain.</p>
+                        <div class="text-center">
+                            <img src="https://images.nagwa.com/figures/explainers/854145053039/2.svg" alt="Sensory Neuron" class="h-32 mx-auto">
+                        </div>
+                        <div class="mt-3 text-sm text-red-500">
+                            <i class="fas fa-arrow-down mr-1"></i>
+                            <span>Input to brain</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-brain text-purple-500 text-4xl"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-purple-600 mb-2">Interneurons</h3>
+                        <p class="text-gray-700 mb-3">Connect neurons in your brain and spinal cord - they do the thinking!</p>
+                        <div class="text-center">
+                            <img src="https://images.nagwa.com/figures/explainers/854145053039/3.svg" alt="Interneuron" class="h-32 mx-auto">
+                        </div>
+                        <div class="mt-3 text-sm text-purple-500">
+                            <i class="fas fa-exchange-alt mr-1"></i>
+                            <span>Information processors</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-running text-green-500 text-4xl"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-green-600 mb-2">Motor Neurons</h3>
+                        <p class="text-gray-700 mb-3">Carry messages from brain to muscles to make you move.</p>
+                        <div class="text-center">
+                            <img src="https://images.nagwa.com/figures/explainers/854145053039/4.svg" alt="Motor Neuron" class="h-32 mx-auto">
+                        </div>
+                        <div class="mt-3 text-sm text-green-500">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            <span>Output from brain</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-blue-100 p-6 rounded-lg">
+                    <h3 class="font-bold text-blue-700 mb-3"><i class="fas fa-project-diagram mr-2"></i>Neuron Pathway Example</h3>
+                    <div class="flex flex-col items-center">
+                        <div class="w-full max-w-xl">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-1">
+                                        <i class="fas fa-hand-paper text-red-500"></i>
+                                    </div>
+                                    <span class="text-xs font-medium">Touch hot pan</span>
+                                </div>
+                                <div class="flex-1 h-1 bg-gray-300 mx-2 relative">
+                                    <div class="absolute inset-0 bg-gradient-to-r from-red-400 to-purple-400 rounded-full signal-animation"></div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-1">
+                                        <i class="fas fa-brain text-purple-500"></i>
+                                    </div>
+                                    <span class="text-xs font-medium">Brain processes</span>
+                                </div>
+                                <div class="flex-1 h-1 bg-gray-300 mx-2 relative">
+                                    <div class="absolute inset-0 bg-gradient-to-r from-purple-400 to-green-400 rounded-full signal-animation" style="animation-delay: 0.5s;"></div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-1">
+                                        <i class="fas fa-running text-green-500"></i>
+                                    </div>
+                                    <span class="text-xs font-medium">Move hand away</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-700 mt-4 text-center text-sm">
+                                This reflex happens in just 0.05 seconds - faster than you can blink!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fun Facts Tab -->
+            <div id="funfacts" class="tab-content">
+                <h2 class="text-2xl font-bold text-blue-700 mb-6">Fun Neuron Facts</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                        <h3 class="font-bold text-lg text-blue-600 mb-3"><i class="fas fa-star mr-2"></i>Amazing Neuron Numbers</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <div class="bg-blue-100 p-1 rounded-full mr-3 mt-1">
+                                    <i class="fas fa-hashtag text-blue-600 text-xs"></i>
+                                </div>
+                                <span class="text-gray-700">Babies are born with about 100 billion neurons!</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="bg-blue-100 p-1 rounded-full mr-3 mt-1">
+                                    <i class="fas fa-hashtag text-blue-600 text-xs"></i>
+                                </div>
+                                <span class="text-gray-700">Each neuron connects to about 7,000 others - that's like having 7,000 friends!</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="bg-blue-100 p-1 rounded-full mr-3 mt-1">
+                                    <i class="fas fa-hashtag text-blue-600 text-xs"></i>
+                                </div>
+                                <span class="text-gray-700">Your spinal cord has about 1 billion neurons working hard.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                        <h3 class="font-bold text-lg text-purple-600 mb-3"><i class="fas fa-bolt mr-2"></i>Speedy Signals</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <div class="bg-purple-100 p-1 rounded-full mr-3 mt-1">
+                                    <i class="fas fa-tachometer-alt text-purple-600 text-xs"></i>
+                                </div>
+                                <span class="text-gray-700">Neural signals can travel up to 268 mph (faster than a race car!)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="bg-purple-100 p-1 rounded-full mr-3 mt-1">
+                                    <i class="fas fa-brain text-purple-600 text-xs"></i>
+                                </div>
+                                <span class="text-gray-700">Your brain uses about 20% of your body's energy.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="bg-purple-100 p-1 rounded-full mr-3 mt-1">
+                                    <i class="fas fa-fire text-purple-600 text-xs"></i>
+                                </div>
+                                <span class="text-gray-700">Thinking hard can burn about 320 calories per day.</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm md:col-span-2">
+                        <h3 class="font-bold text-lg text-green-600 mb-3"><i class="fas fa-seedling mr-2"></i>Growing Your Brain</h3>
+                        <div class="flex flex-col md:flex-row gap-6 items-center">
+                            <div class="md:w-1/3">
+                                <img src="https://www.sciencefacts.net/wp-content/uploads/2020/06/Neuron-Connection.jpg" alt="Neuron connections" class="w-full rounded-lg shadow">
+                            </div>
+                            <div class="md:w-2/3">
+                                <p class="text-gray-700 mb-4">When you learn new things, your neurons grow stronger connections! This is called neuroplasticity.</p>
+                                <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                                    <h4 class="font-bold text-green-700 mb-2"><i class="fas fa-lightbulb mr-2"></i>Learning Tip</h4>
+                                    <p class="text-gray-700">Practicing skills (like math or sports) makes these connections stronger - that's why practice makes perfect!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0 text-center md:text-left">
+                    <h3 class="text-xl font-bold mb-2">Neurons Explained</h3>
+                    <p class="text-gray-400">Made for curious 8th graders</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-youtube text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-envelope text-xl"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400 text-sm">
+                <p>&copy; 2023 Neuroscience for Kids. All images from ScienceFacts.net</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg overflow-hidden w-full max-w-4xl relative">
+            <button id="closeModal" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 rounded-full p-2 z-10">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="aspect-w-16 aspect-h-9">
+                <iframe id="videoFrame" class="w-full h-96" src="https://www.youtube.com/embed/6qS83wD29PY" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab functionality
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                
+                // Update active tab button
+                tabBtns.forEach(b => {
+                    b.classList.remove('active', 'text-blue-700', 'border-blue-700');
+                    b.classList.add('text-gray-600', 'hover:text-blue-600');
+                });
+                btn.classList.add('active', 'text-blue-700', 'border-blue-700');
+                btn.classList.remove('text-gray-600', 'hover:text-blue-600');
+                
+                // Update active tab content
+                tabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Neuron parts highlighting
+        const partBtns = document.querySelectorAll('.part-btn');
+        const partInfos = document.querySelectorAll('.part-info');
+        
+        partBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const part = btn.getAttribute('data-part');
+                
+                // Reset all highlights
+                document.querySelectorAll('[id^="svg-"]').forEach(el => el.classList.remove('part-highlight'));
+                partInfos.forEach(info => info.classList.remove('bg-blue-100'));
+                
+                // Highlight selected part
+                document.getElementById(`svg-${part}`).classList.add('part-highlight');
+                document.querySelector(`.part-info[data-part="${part}"]`).classList.add('bg-blue-100');
+            });
+        });
+        
+        // Reset highlighting
+        document.getElementById('reset-highlight').addEventListener('click', () => {
+            document.querySelectorAll('[id^="svg-"]').forEach(el => el.classList.remove('part-highlight'));
+            partInfos.forEach(info => info.classList.remove('bg-blue-100'));
+        });
+
+        // Action potential animation
+        document.getElementById('playActionPotential').addEventListener('click', () => {
+            const ap = document.getElementById('actionPotential');
+            ap.style.width = '0%';
+            ap.style.transition = 'none';
+            void ap.offsetWidth; // Trigger reflow
+            
+            ap.style.transition = 'width 1.5s linear';
+            ap.style.width = '100%';
+            
+            // Reset after animation
+            setTimeout(() => {
+                ap.style.transition = 'none';
+                ap.style.width = '0%';
+            }, 3000);
+        });
+
+        // Video modal
+        const playVideoBtn = document.querySelector('.play-video-btn');
+        const videoModal = document.getElementById('videoModal');
+        const closeModal = document.getElementById('closeModal');
+        const videoFrame = document.getElementById('videoFrame');
+        
+        playVideoBtn.addEventListener('click', () => {
+            videoModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        closeModal.addEventListener('click', () => {
+            videoModal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            // Reset video
+            videoFrame.src = videoFrame.src;
+        });
+        
+        // Close modal when clicking outside
+        videoModal.addEventListener('click', (e) => {
+            if (e.target === videoModal) {
+                videoModal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                // Reset video
+                videoFrame.src = videoFrame.src;
+            }
+        });
+
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        
+        darkModeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            if (document.documentElement.classList.contains('dark')) {
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        });
+        
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.documentElement.classList.add('dark');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        // Audio toggle (simulated)
+        const audioToggle = document.getElementById('audioToggle');
+        let audioPlaying = false;
+        
+        audioToggle.addEventListener('click', () => {
+            audioPlaying = !audioPlaying;
+            if (audioPlaying) {
+                audioToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            } else {
+                audioToggle.innerHTML = '<i class="fas fa-volume-up"></i>';
+            }
+        });
+    </script>
+</body>
+</html>
