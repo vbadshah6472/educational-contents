@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shree Tikuligadh Secondary School | Tilottama-14, Rupandehi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom CSS */
+        .hero-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3');
+            background-size: cover;
+            background-position: center;
+        }
+        .admin-panel {
+            transition: all 0.3s ease;
+        }
+        .admin-panel:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .floating-btn {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .gallery-item {
+            transition: all 0.3s ease;
+        }
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- Top Announcement Bar -->
+    <div class="bg-blue-800 text-white text-center py-2 px-4">
+        <marquee behavior="scroll" direction="left">
+            Admissions open for 2081 BS! | Annual Sports Day on Magh 15 | Mid-term exams starting from Poush 10
+        </marquee>
+    </div>
+
+    <!-- Header/Navigation -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="https://via.placeholder.com/50" alt="School Logo" class="h-12 w-12 rounded-full">
+                <div>
+                    <h1 class="text-xl font-bold text-blue-900">SHREE TIKULIGADH SECONDARY SCHOOL</h1>
+                    <p class="text-xs text-gray-600">Tilottama-14, Rupandehi | Estd. 2018</p>
+                </div>
+            </div>
+            
+            <nav class="hidden md:flex space-x-8">
+                <a href="#home" class="text-blue-800 font-medium hover:text-blue-600">Home</a>
+                <a href="#about" class="text-gray-700 hover:text-blue-600">About</a>
+                <a href="#academics" class="text-gray-700 hover:text-blue-600">Academics</a>
+                <a href="#facilities" class="text-gray-700 hover:text-blue-600">Facilities</a>
+                <a href="#gallery" class="text-gray-700 hover:text-blue-600">Gallery</a>
+                <a href="#contact" class="text-gray-700 hover:text-blue-600">Contact</a>
+            </nav>
+            
+            <button class="md:hidden text-gray-700" id="mobile-menu-button">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden bg-white w-full py-2 px-4 shadow-md" id="mobile-menu">
+            <a href="#home" class="block py-2 text-gray-700 hover:text-blue-600">Home</a>
+            <a href="#about" class="block py-2 text-gray-700 hover:text-blue-600">About</a>
+            <a href="#academics" class="block py-2 text-gray-700 hover:text-blue-600">Academics</a>
+            <a href="#facilities" class="block py-2 text-gray-700 hover:text-blue-600">Facilities</a>
+            <a href="#gallery" class="block py-2 text-gray-700 hover:text-blue-600">Gallery</a>
+            <a href="#contact" class="block py-2 text-gray-700 hover:text-blue-600">Contact</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-bg text-white py-20 md:py-32">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-4">Quality Education for Bright Future</h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">Shree Tikuligadh Secondary School is committed to providing excellent education in a nurturing environment.</p>
+            <div class="flex flex-col md:flex-row justify-center gap-4">
+                <a href="#admission" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full transition duration-300">Admission Inquiry</a>
+                <a href="#contact" class="bg-transparent hover:bg-white hover:text-blue-800 text-white font-bold py-3 px-6 border-2 border-white rounded-full transition duration-300">Visit Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Info Section -->
+    <section class="bg-white py-8 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-blue-50 p-6 rounded-lg text-center">
+                    <i class="fas fa-graduation-cap text-blue-600 text-4xl mb-3"></i>
+                    <h3 class="text-xl font-bold text-gray-800">500+ Students</h3>
+                    <p class="text-gray-600">Quality education for all</p>
+                </div>
+                <div class="bg-green-50 p-6 rounded-lg text-center">
+                    <i class="fas fa-chalkboard-teacher text-green-600 text-4xl mb-3"></i>
+                    <h3 class="text-xl font-bold text-gray-800">25+ Teachers</h3>
+                    <p class="text-gray-600">Qualified & experienced</p>
+                </div>
+                <div class="bg-yellow-50 p-6 rounded-lg text-center">
+                    <i class="fas fa-school text-yellow-600 text-4xl mb-3"></i>
+                    <h3 class="text-xl font-bold text-gray-800">Modern Campus</h3>
+                    <p class="text-gray-600">State-of-the-art facilities</p>
+                </div>
+                <div class="bg-purple-50 p-6 rounded-lg text-center">
+                    <i class="fas fa-trophy text-purple-600 text-4xl mb-3"></i>
+                    <h3 class="text-xl font-bold text-gray-800">100% Pass Rate</h3>
+                    <p class="text-gray-600">Excellent results</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-blue-900 mb-2">About Our School</h2>
+                <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <div class="md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1588072432836-e10032774350?ixlib=rb-4.0.3" alt="School Building" class="rounded-lg shadow-lg w-full">
+                </div>
+                <div class="md:w-1/2">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Welcome to Shree Tikuligadh Secondary School</h3>
+                    <p class="text-gray-700 mb-4">Established in 2018, Shree Tikuligadh Secondary School has been providing quality education to the children of Tilottama-14, Rupandehi and surrounding areas. Our mission is to create a learning environment that fosters academic excellence, character development, and social responsibility.</p>
+                    <p class="text-gray-700 mb-6">We offer classes from grade 1 to 10, following the curriculum prescribed by the Government of Nepal. Our dedicated faculty and modern facilities ensure that every student receives the best possible education.</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>Qualified Teachers</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>Science Lab</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>Computer Lab</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>Library</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>Sports Facilities</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            <span>Transportation</span>
+                        </div>
+                    </div>
+                    
+                    <a href="#contact" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition duration-300">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Academics Section -->
+    <section id="academics" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-blue-900 mb-2">Our Academic Programs</h2>
+                <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
+                <p class="text-gray-600 max-w-2xl mx-auto mt-4">We offer comprehensive academic programs designed to prepare students for success in higher education and beyond.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition duration-300">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-book-reader text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-3">Primary Level (1-5)</h3>
+                    <p class="text-gray-700 text-center mb-4">Foundational education focusing on literacy, numeracy, and holistic development.</p>
+                    <ul class="text-gray-600 space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Nepali, English, Mathematics</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Science, Social Studies</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Computer Basics</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition duration-300">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-book-open text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-3">Lower Secondary (6-8)</h3>
+                    <p class="text-gray-700 text-center mb-4">Building on foundational knowledge with more specialized subjects.</p>
+                    <ul class="text-gray-600 space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>All core subjects</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Optional Mathematics</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Computer Science</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition duration-300">
+                    <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-graduation-cap text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-center mb-3">Secondary Level (9-10)</h3>
+                    <p class="text-gray-700 text-center mb-4">Preparation for SEE with comprehensive subject options.</p>
+                    <ul class="text-gray-600 space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Science, Management, Humanities</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Computer Science</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>SEE Preparation Classes</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Facilities Section -->
+    <section id="facilities" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-blue-900 mb-2">Our Facilities</h2>
+                <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
+                <p class="text-gray-600 max-w-2xl mx-auto mt-4">We provide state-of-the-art facilities to support our students' learning and development.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
+                    <img src="https://images.unsplash.com/photo-1588072432836-e10032774350?ixlib=rb-4.0.3" alt="Classroom" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Modern Classrooms</h3>
+                        <p class="text-gray-700">Spacious, well-ventilated classrooms equipped with smart boards and comfortable furniture.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
+                    <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-4.0.3" alt="Science Lab" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Science Laboratory</h3>
+                        <p class="text-gray-700">Fully equipped laboratory for Physics, Chemistry and Biology practical sessions.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
+                    <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3" alt="Computer Lab" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Computer Lab</h3>
+                        <p class="text-gray-700">Modern computer lab with high-speed internet and latest software for digital learning.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
+                    <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3" alt="Library" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Library</h3>
+                        <p class="text-gray-700">Well-stocked library with textbooks, reference books, and reading materials for all grades.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
+                    <img src="https://images.unsplash.com/photo-1543357481-c60aa400cc09?ixlib=rb-4.0.3" alt="Sports" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Sports Facilities</h3>
+                        <p class="text-gray-700">Playground for football, volleyball, basketball and indoor games like table tennis and chess.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300">
+                    <img src="https://images.unsplash.com/photo-1606326608606-aa0b629e6552?ixlib=rb-4.0.3" alt="Transport" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Transportation</h3>
+                        <p class="text-gray-700">Safe and reliable school bus service covering major routes in Tilottama and surrounding areas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-blue-900 mb-2">Photo Gallery</h2>
+                <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
+                <p class="text-gray-600 max-w-2xl mx-auto mt-4">Moments from our school life and activities.</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div class="gallery-item rounded-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3" alt="School Event" class="w-full h-40 object-cover">
+                </div>
+                <div class="gallery-item rounded-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3" alt="Students" class="w-full h-40 object-cover">
+                </div>
+                <div class="gallery-item rounded-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1541178735493-479c1a27ed24?ixlib=rb-4.0.3" alt="Sports Day" class="w-full h-40 object-cover">
+                </div>
+                <div class="gallery-item rounded-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3" alt="Classroom" class="w-full h-40 object-cover">
+                </div>
+                <div class="gallery-item rounded-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3" alt="Science Fair" class="w-full h-40 object-cover">
+                </div>
+                <div class="gallery-item rounded-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3" alt="Cultural Program" class="w-full h-40 object-cover">
+                </div>
+                <div class="gallery-item rounded-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3" alt="Teachers" class="w-full h-40 object-cover">
+                </div>
+                <div class="gallery-item rounded-lg overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1541178735493-479c1a27ed24?ixlib=rb-4.0.3" alt="Award Ceremony" class="w-full h-40 object-cover">
+                </div>
+            </div>
+            
+            <div class="text-center mt-8">
+                <a href="#" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition duration-300">View More Photos</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admission Section -->
+    <section id="admission" class="py-16 bg-blue-900 text-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-2">Admission Process</h2>
+                <div class="w-20 h-1 bg-white mx-auto"></div>
+                <p class="max-w-2xl mx-auto mt-4">Join our community of learners for the academic year 2081 BS.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-blue-800 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">Eligibility</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-300 mt-1 mr-2"></i>
+                            <span>Grade 1: Minimum age 5 years</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-300 mt-1 mr-2"></i>
+                            <span>Other grades: Transfer certificate from previous school</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-300 mt-1 mr-2"></i>
+                            <span>Original birth certificate</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-blue-800 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">Documents Required</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-file-alt text-yellow-300 mt-1 mr-2"></i>
+                            <span>Birth certificate (original + 2 copies)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-file-alt text-yellow-300 mt-1 mr-2"></i>
+                            <span>Recent passport photos (4 copies)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-file-alt text-yellow-300 mt-1 mr-2"></i>
+                            <span>Previous school report card (for grades 2-10)</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-blue-800 p-6 rounded-lg">
+                    <h3 class="text-xl font-bold mb-4">Fee Structure</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-rupee-sign text-blue-300 mt-1 mr-2"></i>
+                            <span>Admission fee: Rs. 2,000 (one-time)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-rupee-sign text-blue-300 mt-1 mr-2"></i>
+                            <span>Monthly tuition: Rs. 1,500 - Rs. 2,500 (varies by grade)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-rupee-sign text-blue-300 mt-1 mr-2"></i>
+                            <span>Transportation fee: Rs. 1,000/month (optional)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-12 bg-white rounded-lg p-8 max-w-4xl mx-auto">
+                <h3 class="text-2xl font-bold text-blue-900 mb-6 text-center">Admission Inquiry Form</h3>
+                <form id="admissionForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="name" class="block text-gray-700 mb-2">Student's Name</label>
+                        <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="grade" class="block text-gray-700 mb-2">Grade Applying For</label>
+                        <select id="grade" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Select Grade</option>
+                            <option value="1">Grade 1</option>
+                            <option value="2">Grade 2</option>
+                            <option value="3">Grade 3</option>
+                            <option value="4">Grade 4</option>
+                            <option value="5">Grade 5</option>
+                            <option value="6">Grade 6</option>
+                            <option value="7">Grade 7</option>
+                            <option value="8">Grade 8</option>
+                            <option value="9">Grade 9</option>
+                            <option value="10">Grade 10</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="parent" class="block text-gray-700 mb-2">Parent/Guardian Name</label>
+                        <input type="text" id="parent" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-gray-700 mb-2">Phone Number</label>
+                        <input type="tel" id="phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label for="message" class="block text-gray-700 mb-2">Additional Information</label>
+                        <textarea id="message" rows="3" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div class="md:col-span-2 text-center">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300">Submit Inquiry</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-blue-900 mb-2">Contact Us</h2>
+                <div class="w-20 h-1 bg-blue-600 mx-auto"></div>
+                <p class="text-gray-600 max-w-2xl mx-auto mt-4">We'd love to hear from you. Visit us or get in touch through any of these channels.</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-8">
+                <div class="md:w-1/2 bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-6">Get In Touch</h3>
+                    <form id="contactForm" class="space-y-4">
+                        <div>
+                            <label for="contactName" class="block text-gray-700 mb-2">Your Name</label>
+                            <input type="text" id="contactName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="contactEmail" class="block text-gray-700 mb-2">Email Address</label>
+                            <input type="email" id="contactEmail" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="contactSubject" class="block text-gray-700 mb-2">Subject</label>
+                            <input type="text" id="contactSubject" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="contactMessage" class="block text-gray-700 mb-2">Message</label>
+                            <textarea id="contactMessage" rows="4" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        </div>
+                        <div>
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition duration-300">Send Message</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="md:w-1/2 space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold mb-4">School Address</h3>
+                        <div class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-red-500 mt-1 mr-3 text-xl"></i>
+                            <div>
+                                <p class="text-gray-700">Shree Tikuligadh Secondary School</p>
+                                <p class="text-gray-700">Tilottama-14, Rupandehi</p>
+                                <p class="text-gray-700">Lumbini Province, Nepal</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold mb-4">Contact Information</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-phone-alt text-blue-500 mr-3"></i>
+                                <span class="text-gray-700">+977-71-540123</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-mobile-alt text-blue-500 mr-3"></i>
+                                <span class="text-gray-700">+977-9857023456</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-envelope text-blue-500 mr-3"></i>
+                                <span class="text-gray-700">info@tikuligadh.edu.np</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-globe text-blue-500 mr-3"></i>
+                                <span class="text-gray-700">www.tikuligadh.edu.np</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold mb-4">School Hours</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-700">Sunday - Thursday</span>
+                                <span class="text-gray-700 font-medium">10:00 AM - 4:00 PM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-700">Friday</span>
+                                <span class="text-gray-700 font-medium">10:00 AM - 1:00 PM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-700">Saturday</span>
+                                <span class="text-gray-700 font-medium">Closed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Shree Tikuligadh Secondary School</h3>
+                    <p class="text-gray-400">Providing quality education since 2018 in Tilottama-14, Rupandehi, Nepal.</p>
+                    <div class="flex space-x-4 mt-6">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white">About Us</a></li>
+                        <li><a href="#academics" class="text-gray-400 hover:text-white">Academics</a></li>
+                        <li><a href="#facilities" class="text-gray-400 hover:text-white">Facilities</a></li>
+                        <li><a href="#gallery" class="text-gray-400 hover:text-white">Gallery</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Important Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Ministry of Education</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">CDC Nepal</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Rupandehi DEO</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">SEE Results</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Newsletter</h3>
+                    <p class="text-gray-400 mb-4">Subscribe to our newsletter for updates and announcements.</p>
+                    <form class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg w-full text-gray-800">
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-r-lg"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400">© 2023 Shree Tikuligadh Secondary School. All rights reserved.</p>
+                <div class="mt-4 md:mt-0">
+                    <a href="admin.html" class="admin-panel bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg inline-flex items-center">
+                        <i class="fas fa-lock mr-2"></i> Admin Panel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Action Button -->
+    <div class="fixed bottom-8 right-8 z-50">
+        <a href="#home" class="floating-btn bg-blue-600 hover:bg-blue-700 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-xl">
+            <i class="fas fa-arrow-up text-xl"></i>
+        </a>
+    </div>
+
+    <!-- Admin Panel Modal (Hidden by default) -->
+    <div id="adminModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="p-6">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Admin Login</h3>
+                <form id="adminLoginForm">
+                    <div class="mb-4">
+                        <label for="adminUsername" class="block text-gray-700 mb-2">Username</label>
+                        <input type="text" id="adminUsername" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="mb-6">
+                        <label for="adminPassword" class="block text-gray-700 mb-2">Password</label>
+                        <input type="password" id="adminPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="flex justify-between">
+                        <button type="button" id="cancelAdminLogin" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-6 rounded-lg">Cancel</button>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Form submission handlers
+        document.getElementById('admissionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your admission inquiry. We will contact you shortly.');
+            this.reset();
+        });
+
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your message. We will get back to you soon.');
+            this.reset();
+        });
+
+        // Admin panel link functionality
+        document.querySelector('a[href="admin.html"]').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('adminModal').classList.remove('hidden');
+        });
+
+        // Admin modal close
+        document.getElementById('cancelAdminLogin').addEventListener('click', function() {
+            document.getElementById('adminModal').classList.add('hidden');
+        });
+
+        // Admin login form
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            // Basic validation (in a real app, this would be a server-side check)
+            if(username === 'admin' && password === 'tikuligadh123') {
+                window.location.href = 'admin.html';
+            } else {
+                alert('Invalid credentials. Please try again.');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
