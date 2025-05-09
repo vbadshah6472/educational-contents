@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interhouse Quiz Competition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        .team-red {
+            background-color: #fecaca;
+            border-color: #ef4444;
+        }
+        
+        .team-blue {
+            background-color: #bfdbfe;
+            border-color: #3b82f6;
+        }
+        
+        .team-green {
+            background-color: #bbf7d0;
+            border-color: #22c55e;
+        }
+        
+        .team-yellow {
+            background-color: #fef08a;
+            border-color: #eab308;
+        }
+        
+        .active-team {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .timer-circle {
+            width: 120px;
+            height: 120px;
+            position: relative;
+        }
+        
+        .timer-progress {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(#3b82f6 var(--progress), #e2e8f0 var(--progress));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .question-card {
+            min-height: 200px;
+            transition: all 0.3s ease;
+        }
+        
+        .question-hidden {
+            background: repeating-linear-gradient(
+                45deg,
+                #f1f5f9,
+                #f1f5f9 10px,
+                #e2e8f0 10px,
+                #e2e8f0 20px
+            );
+            color: transparent;
+            user-select: none;
+        }
+        
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .modal-content {
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .score-change {
+            animation: scorePulse 0.5s ease;
+        }
+        
+        @keyframes scorePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-blue-800 text-white py-4 px-6 shadow-lg">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <div class="text-center md:text-left mb-4 md:mb-0">
+                <h1 class="text-2xl md:text-3xl font-bold">INTERHOUSE QUIZ COMPETITION</h1>
+                <p class="text-lg">SHREE TIKULIGADH SECONDARY SCHOOL</p>
+            </div>
+            <div class="text-center md:text-right">
+                <p>Tilottama-14, Tikuligadh</p>
+                <p>Established: 2018</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap justify-center mb-8 gap-2">
+            <button id="home-tab" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition">Home</button>
+            <button id="general-tab" class="px-6 py-2 bg-gray-200 rounded-lg font-medium hover:bg-gray-300 transition">General Round</button>
+            <button id="av-tab" class="px-6 py-2 bg-gray-200 rounded-lg font-medium hover:bg-gray-300 transition">Audio-Visual Round</button>
+            <button id="rapid-tab" class="px-6 py-2 bg-gray-200 rounded-lg font-medium hover:bg-gray-300 transition">Rapid-Fire Round</button>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="home-screen" class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold text-center mb-6 text-blue-800">Welcome to the Interhouse Quiz Competition!</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Rules Section -->
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700">Competition Rules</h3>
+                    <ul class="space-y-3 list-disc pl-5">
+                        <li>There are 4 teams: Red, Blue, Green, and Yellow</li>
+                        <li>General Round: 40 questions worth 5 points each</li>
+                        <li>Audio-Visual Round: 12 questions worth 10 points each</li>
+                        <li>Rapid-Fire Round: 5 questions per team in 40 seconds</li>
+                        <li>Timer decreases when questions are passed (40s → 30s → 20s → 10s)</li>
+                        <li>Only the active team can answer during their turn</li>
+                        <li>Use PASS button to move to next team if current team can't answer</li>
+                    </ul>
+                </div>
+                
+                <!-- Teams Overview -->
+                <div>
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700">Teams</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="team-red p-4 rounded-lg border-2 text-center">
+                            <h4 class="font-bold text-red-700">RED TEAM</h4>
+                            <p class="text-2xl font-bold">0 pts</p>
+                        </div>
+                        <div class="team-blue p-4 rounded-lg border-2 text-center">
+                            <h4 class="font-bold text-blue-700">BLUE TEAM</h4>
+                            <p class="text-2xl font-bold">0 pts</p>
+                        </div>
+                        <div class="team-green p-4 rounded-lg border-2 text-center">
+                            <h4 class="font-bold text-green-700">GREEN TEAM</h4>
+                            <p class="text-2xl font-bold">0 pts</p>
+                        </div>
+                        <div class="team-yellow p-4 rounded-lg border-2 text-center">
+                            <h4 class="font-bold text-yellow-700">YELLOW TEAM</h4>
+                            <p class="text-2xl font-bold">0 pts</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold mb-2">Current Status:</h4>
+                        <p class="text-lg">Ready to begin! Select a round to start.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- General Round Screen (Hidden by default) -->
+        <div id="general-screen" class="hidden bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold text-center mb-6 text-blue-800">General Round</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Question Area -->
+                <div class="md:col-span-2">
+                    <div class="question-card bg-gray-50 p-6 rounded-lg border border-gray-300 mb-4 question-hidden">
+                        <p class="text-center text-gray-500">Question will appear here when revealed</p>
+                    </div>
+                    
+                    <div class="flex justify-between mb-6">
+                        <button id="reveal-question" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                            <i class="fas fa-eye mr-2"></i>Reveal Question
+                        </button>
+                        <button id="next-question" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                            <i class="fas fa-forward mr-2"></i>Next Question
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-5 gap-2">
+                        <button class="question-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">1</button>
+                        <button class="question-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">2</button>
+                        <button class="question-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">3</button>
+                        <button class="question-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">4</button>
+                        <button class="question-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">5</button>
+                        <button class="question-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">6</button>
+                        <button class="question-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">7</button>
+                        <button class="question-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">8</button>
+                        <button class="question-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">9</button>
+                        <button class="question-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">10</button>
+                    </div>
+                </div>
+                
+                <!-- Timer and Team Controls -->
+                <div>
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-300 mb-6">
+                        <h3 class="text-xl font-semibold mb-4 text-center">Timer</h3>
+                        <div class="flex justify-center mb-4">
+                            <div class="timer-circle">
+                                <div class="timer-progress" style="--progress: 100%">
+                                    <span class="text-3xl font-bold">40</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center space-x-2 mb-4">
+                            <button class="timer-control px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" data-time="40">40s</button>
+                            <button class="timer-control px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" data-time="30">30s</button>
+                            <button class="timer-control px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" data-time="20">20s</button>
+                            <button class="timer-control px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" data-time="10">10s</button>
+                        </div>
+                        <div class="flex justify-center space-x-2">
+                            <button id="start-timer" class="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700">
+                                <i class="fas fa-play mr-1"></i>Start
+                            </button>
+                            <button id="pause-timer" class="px-4 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                                <i class="fas fa-pause mr-1"></i>Pause
+                            </button>
+                            <button id="reset-timer" class="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-700">
+                                <i class="fas fa-undo mr-1"></i>Reset
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-300">
+                        <h3 class="text-xl font-semibold mb-4 text-center">Team Controls</h3>
+                        
+                        <div class="mb-4">
+                            <p class="text-center font-medium mb-2">Current Team:</p>
+                            <div class="team-red p-3 rounded-lg border-2 text-center active-team">
+                                <h4 class="font-bold text-red-700">RED TEAM</h4>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-center space-x-4">
+                            <button id="correct-answer" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                                <i class="fas fa-check mr-1"></i>Correct (+5)
+                            </button>
+                            <button id="pass-question" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">
+                                <i class="fas fa-forward mr-1"></i>PASS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio-Visual Round Screen (Hidden by default) -->
+        <div id="av-screen" class="hidden bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold text-center mb-6 text-blue-800">Audio-Visual Round</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Question Area -->
+                <div class="md:col-span-2">
+                    <div class="question-card bg-gray-50 p-6 rounded-lg border border-gray-300 mb-4 question-hidden">
+                        <p class="text-center text-gray-500">Audio/Visual content will appear here when revealed</p>
+                    </div>
+                    
+                    <div class="flex justify-between mb-6">
+                        <button id="reveal-av" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                            <i class="fas fa-eye mr-2"></i>Reveal Content
+                        </button>
+                        <button id="next-av" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                            <i class="fas fa-forward mr-2"></i>Next Question
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-4 gap-2">
+                        <button class="av-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">1</button>
+                        <button class="av-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">2</button>
+                        <button class="av-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">3</button>
+                        <button class="av-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">4</button>
+                        <button class="av-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">5</button>
+                        <button class="av-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">6</button>
+                        <button class="av-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">7</button>
+                        <button class="av-number bg-gray-200 hover:bg-gray-300 py-2 rounded transition">8</button>
+                    </div>
+                </div>
+                
+                <!-- Timer and Team Controls -->
+                <div>
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-300 mb-6">
+                        <h3 class="text-xl font-semibold mb-4 text-center">Timer</h3>
+                        <div class="flex justify-center mb-4">
+                            <div class="timer-circle">
+                                <div class="timer-progress" style="--progress: 100%">
+                                    <span class="text-3xl font-bold">40</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center space-x-2 mb-4">
+                            <button class="timer-control px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" data-time="40">40s</button>
+                            <button class="timer-control px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" data-time="30">30s</button>
+                            <button class="timer-control px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" data-time="20">20s</button>
+                            <button class="timer-control px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" data-time="10">10s</button>
+                        </div>
+                        <div class="flex justify-center space-x-2">
+                            <button id="start-timer-av" class="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700">
+                                <i class="fas fa-play mr-1"></i>Start
+                            </button>
+                            <button id="pause-timer-av" class="px-4 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                                <i class="fas fa-pause mr-1"></i>Pause
+                            </button>
+                            <button id="reset-timer-av" class="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-700">
+                                <i class="fas fa-undo mr-1"></i>Reset
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-300">
+                        <h3 class="text-xl font-semibold mb-4 text-center">Team Controls</h3>
+                        
+                        <div class="mb-4">
+                            <p class="text-center font-medium mb-2">Current Team:</p>
+                            <div class="team-red p-3 rounded-lg border-2 text-center active-team">
+                                <h4 class="font-bold text-red-700">RED TEAM</h4>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-center space-x-4">
+                            <button id="correct-answer-av" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                                <i class="fas fa-check mr-1"></i>Correct (+10)
+                            </button>
+                            <button id="pass-question-av" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">
+                                <i class="fas fa-forward mr-1"></i>PASS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rapid-Fire Round Screen (Hidden by default) -->
+        <div id="rapid-screen" class="hidden bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-3xl font-bold text-center mb-6 text-blue-800">Rapid-Fire Round</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Question Area -->
+                <div class="md:col-span-2">
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-300 mb-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-semibold">Team: <span id="rapid-team" class="text-red-700">RED</span></h3>
+                            <div class="flex items-center">
+                                <span class="text-lg font-bold mr-2">Time:</span>
+                                <span id="rapid-timer" class="text-2xl font-bold">40</span>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="question-card bg-white p-4 rounded border border-gray-200">
+                                <p>1. Question will appear here when revealed</p>
+                            </div>
+                            <div class="question-card bg-white p-4 rounded border border-gray-200">
+                                <p>2. Question will appear here when revealed</p>
+                            </div>
+                            <div class="question-card bg-white p-4 rounded border border-gray-200">
+                                <p>3. Question will appear here when revealed</p>
+                            </div>
+                            <div class="question-card bg-white p-4 rounded border border-gray-200">
+                                <p>4. Question will appear here when revealed</p>
+                            </div>
+                            <div class="question-card bg-white p-4 rounded border border-gray-200">
+                                <p>5. Question will appear here when revealed</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button id="reveal-rapid" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                            <i class="fas fa-eye mr-2"></i>Reveal Questions
+                        </button>
+                        <button id="next-rapid" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                            <i class="fas fa-forward mr-2"></i>Next Team
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Team Controls -->
+                <div>
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-300 mb-6">
+                        <h3 class="text-xl font-semibold mb-4 text-center">Team Progress</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="team-red p-3 rounded-lg border-2">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-bold text-red-700">RED TEAM</h4>
+                                    <span class="text-lg font-bold">0/5</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                                    <div class="bg-red-600 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="team-blue p-3 rounded-lg border-2">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-bold text-blue-700">BLUE TEAM</h4>
+                                    <span class="text-lg font-bold">0/5</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="team-green p-3 rounded-lg border-2">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-bold text-green-700">GREEN TEAM</h4>
+                                    <span class="text-lg font-bold">0/5</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                                    <div class="bg-green-600 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="team-yellow p-3 rounded-lg border-2">
+                                <div class="flex justify-between items-center">
+                                    <h4 class="font-bold text-yellow-700">YELLOW TEAM</h4>
+                                    <span class="text-lg font-bold">0/5</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                                    <div class="bg-yellow-500 h-2.5 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-300">
+                        <h3 class="text-xl font-semibold mb-4 text-center">Controls</h3>
+                        
+                        <div class="flex flex-col space-y-3">
+                            <button id="start-rapid" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition">
+                                <i class="fas fa-play mr-1"></i>Start Timer
+                            </button>
+                            <button id="correct-rapid" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition">
+                                <i class="fas fa-check mr-1"></i>Correct Answer (+5)
+                            </button>
+                            <button id="skip-rapid" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition">
+                                <i class="fas fa-forward mr-1"></i>Skip Question
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scoreboard Section -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-center mb-6 text-blue-800">Scoreboard</h2>
+            
+            <div class="grid md:grid-cols-4 gap-4">
+                <!-- Red Team -->
+                <div class="team-red p-4 rounded-lg border-2 text-center">
+                    <h3 class="text-xl font-bold text-red-700 mb-2">RED TEAM</h3>
+                    <p class="text-3xl font-bold mb-4">0</p>
+                    <div class="flex justify-center space-x-2">
+                        <button class="add-points px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700" data-team="red" data-points="5">+5</button>
+                        <button class="add-points px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700" data-team="red" data-points="-5">-5</button>
+                    </div>
+                </div>
+                
+                <!-- Blue Team -->
+                <div class="team-blue p-4 rounded-lg border-2 text-center">
+                    <h3 class="text-xl font-bold text-blue-700 mb-2">BLUE TEAM</h3>
+                    <p class="text-3xl font-bold mb-4">0</p>
+                    <div class="flex justify-center space-x-2">
+                        <button class="add-points px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" data-team="blue" data-points="5">+5</button>
+                        <button class="add-points px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700" data-team="blue" data-points="-5">-5</button>
+                    </div>
+                </div>
+                
+                <!-- Green Team -->
+                <div class="team-green p-4 rounded-lg border-2 text-center">
+                    <h3 class="text-xl font-bold text-green-700 mb-2">GREEN TEAM</h3>
+                    <p class="text-3xl font-bold mb-4">0</p>
+                    <div class="flex justify-center space-x-2">
+                        <button class="add-points px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700" data-team="green" data-points="5">+5</button>
+                        <button class="add-points px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700" data-team="green" data-points="-5">-5</button>
+                    </div>
+                </div>
+                
+                <!-- Yellow Team -->
+                <div class="team-yellow p-4 rounded-lg border-2 text-center">
+                    <h3 class="text-xl font-bold text-yellow-700 mb-2">YELLOW TEAM</h3>
+                    <p class="text-3xl font-bold mb-4">0</p>
+                    <div class="flex justify-center space-x-2">
+                        <button class="add-points px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600" data-team="yellow" data-points="5">+5</button>
+                        <button class="add-points px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600" data-team="yellow" data-points="-5">-5</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-center">
+                <button id="reset-scores" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    <i class="fas fa-undo mr-2"></i>Reset All Scores
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Admin Controls Modal -->
+    <div id="admin-modal" class="fixed inset-0 z-50 flex items-center justify-center modal-overlay hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md modal-content">
+            <div class="p-6">
+                <h3 class="text-xl font-bold mb-4">Admin Controls</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Load Questions from URL</label>
+                        <input type="text" id="questions-url" class="w-full px-3 py-2 border rounded" placeholder="https://example.com/questions.json">
+                        <button id="load-questions" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Load</button>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Timer Mode</label>
+                        <select id="timer-mode" class="w-full px-3 py-2 border rounded">
+                            <option value="auto">Auto (decreases on pass)</option>
+                            <option value="manual">Manual (fixed time)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex justify-between pt-4 border-t">
+                        <button id="close-admin" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">Close</button>
+                        <button id="reset-all" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Reset Everything</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Button -->
+    <button id="open-admin" class="fixed bottom-4 right-4 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-900 transition">
+        <i class="fas fa-cog"></i>
+    </button>
+
+    <!-- Audio Elements -->
+    <audio id="timer-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3"></audio>
+    <audio id="correct-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+    <audio id="pass-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-game-show-suspense-waiting-668.mp3"></audio>
+
+    <script>
+        // DOM Elements
+        const homeScreen = document.getElementById('home-screen');
+        const generalScreen = document.getElementById('general-screen');
+        const avScreen = document.getElementById('av-screen');
+        const rapidScreen = document.getElementById('rapid-screen');
+        
+        const homeTab = document.getElementById('home-tab');
+        const generalTab = document.getElementById('general-tab');
+        const avTab = document.getElementById('av-tab');
+        const rapidTab = document.getElementById('rapid-tab');
+        
+        // Timer Elements
+        const timerProgress = document.querySelector('.timer-progress');
+        const timerDisplay = document.querySelector('.timer-progress span');
+        const startTimer = document.getElementById('start-timer');
+        const pauseTimer = document.getElementById('pause-timer');
+        const resetTimer = document.getElementById('reset-timer');
+        const timerControls = document.querySelectorAll('.timer-control');
+        
+        // Team Elements
+        const currentTeamDisplay = document.querySelector('.active-team');
+        const correctAnswerBtn = document.getElementById('correct-answer');
+        const passQuestionBtn = document.getElementById('pass-question');
+        
+        // Question Elements
+        const questionCard = document.querySelector('.question-card');
+        const revealQuestionBtn = document.getElementById('reveal-question');
+        const nextQuestionBtn = document.getElementById('next-question');
+        
+        // Scoreboard Elements
+        const scoreDisplays = {
+            red: document.querySelector('.team-red .text-3xl'),
+            blue: document.querySelector('.team-blue .text-3xl'),
+            green: document.querySelector('.team-green .text-3xl'),
+            yellow: document.querySelector('.team-yellow .text-3xl')
+        };
+        const addPointsBtns = document.querySelectorAll('.add-points');
+        const resetScoresBtn = document.getElementById('reset-scores');
+        
+        // Admin Elements
+        const adminModal = document.getElementById('admin-modal');
+        const openAdminBtn = document.getElementById('open-admin');
+        const closeAdminBtn = document.getElementById('close-admin');
+        const loadQuestionsBtn = document.getElementById('load-questions');
+        const resetAllBtn = document.getElementById('reset-all');
+        
+        // Audio Elements
+        const timerSound = document.getElementById('timer-sound');
+        const correctSound = document.getElementById('correct-sound');
+        const passSound = document.getElementById('pass-sound');
+        
+        // State
+        let currentScreen = 'home';
+        let currentTeam = 'red';
+        let timerValue = 40;
+        let timerInterval;
+        let isTimerRunning = false;
+        let scores = {
+            red: 0,
+            blue: 0,
+            green: 0,
+            yellow: 0
+        };
+        let currentQuestion = 1;
+        let questions = [];
+        
+        // Teams in order for passing
+        const teamOrder = ['red', 'blue', 'green', 'yellow'];
+        
+        // Initialize
+        function init() {
+            // Set up event listeners
+            homeTab.addEventListener('click', () => showScreen('home'));
+            generalTab.addEventListener('click', () => showScreen('general'));
+            avTab.addEventListener('click', () => showScreen('av'));
+            rapidTab.addEventListener('click', () => showScreen('rapid'));
+            
+            // Timer controls
+            startTimer.addEventListener('click', startTimerFunction);
+            pauseTimer.addEventListener('click', pauseTimerFunction);
+            resetTimer.addEventListener('click', resetTimerFunction);
+            
+            timerControls.forEach(control => {
+                control.addEventListener('click', () => {
+                    timerValue = parseInt(control.dataset.time);
+                    updateTimerDisplay();
+                });
+            });
+            
+            // Team controls
+            correctAnswerBtn.addEventListener('click', () => {
+                correctSound.play();
+                addScore(currentTeam, 5);
+                nextQuestion();
+            });
+            
+            passQuestionBtn.addEventListener('click', () => {
+                passSound.play();
+                passQuestion();
+            });
+            
+            // Question controls
+            revealQuestionBtn.addEventListener('click', revealQuestion);
+            nextQuestionBtn.addEventListener('click', nextQuestion);
+            
+            // Scoreboard controls
+            addPointsBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const team = btn.dataset.team;
+                    const points = parseInt(btn.dataset.points);
+                    addScore(team, points);
+                });
+            });
+            
+            resetScoresBtn.addEventListener('click', resetScores);
+            
+            // Admin controls
+            openAdminBtn.addEventListener('click', () => adminModal.classList.remove('hidden'));
+            closeAdminBtn.addEventListener('click', () => adminModal.classList.add('hidden'));
+            loadQuestionsBtn.addEventListener('click', loadQuestions);
+            resetAllBtn.addEventListener('click', resetEverything);
+            
+            // Load sample questions
+            loadSampleQuestions();
+        }
+        
+        // Show screen function
+        function showScreen(screen) {
+            // Hide all screens
+            homeScreen.classList.add('hidden');
+            generalScreen.classList.add('hidden');
+            avScreen.classList.add('hidden');
+            rapidScreen.classList.add('hidden');
+            
+            // Reset tab styles
+            homeTab.classList.remove('bg-blue-600', 'text-white');
+            homeTab.classList.add('bg-gray-200');
+            generalTab.classList.remove('bg-blue-600', 'text-white');
+            generalTab.classList.add('bg-gray-200');
+            avTab.classList.remove('bg-blue-600', 'text-white');
+            avTab.classList.add('bg-gray-200');
+            rapidTab.classList.remove('bg-blue-600', 'text-white');
+            rapidTab.classList.add('bg-gray-200');
+            
+            // Show selected screen and update tab
+            switch(screen) {
+                case 'home':
+                    homeScreen.classList.remove('hidden');
+                    homeTab.classList.remove('bg-gray-200');
+                    homeTab.classList.add('bg-blue-600', 'text-white');
+                    currentScreen = 'home';
+                    break;
+                case 'general':
+                    generalScreen.classList.remove('hidden');
+                    generalTab.classList.remove('bg-gray-200');
+                    generalTab.classList.add('bg-blue-600', 'text-white');
+                    currentScreen = 'general';
+                    break;
+                case 'av':
+                    avScreen.classList.remove('hidden');
+                    avTab.classList.remove('bg-gray-200');
+                    avTab.classList.add('bg-blue-600', 'text-white');
+                    currentScreen = 'av';
+                    break;
+                case 'rapid':
+                    rapidScreen.classList.remove('hidden');
+                    rapidTab.classList.remove('bg-gray-200');
+                    rapidTab.classList.add('bg-blue-600', 'text-white');
+                    currentScreen = 'rapid';
+                    break;
+            }
+        }
+        
+        // Timer functions
+        function startTimerFunction() {
+            if (!isTimerRunning) {
+                isTimerRunning = true;
+                timerInterval = setInterval(() => {
+                    if (timerValue > 0) {
+                        timerValue--;
+                        updateTimerDisplay();
+                        
+                        if (timerValue === 0) {
+                            timerSound.play();
+                            clearInterval(timerInterval);
+                            isTimerRunning = false;
+                        }
+                    }
+                }, 1000);
+            }
+        }
+        
+        function pauseTimerFunction() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+        }
+        
+        function resetTimerFunction() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            timerValue = 40;
+            updateTimerDisplay();
+        }
+        
+        function updateTimerDisplay() {
+            timerDisplay.textContent = timerValue;
+            const progress = (timerValue / 40) * 100;
+            timerProgress.style.setProperty('--progress', `${progress}%`);
+        }
+        
+        // Team functions
+        function setCurrentTeam(team) {
+            currentTeam = team;
+            
+            // Update team display
+            currentTeamDisplay.classList.remove('team-red', 'team-blue', 'team-green', 'team-yellow', 'active-team');
+            currentTeamDisplay.classList.add(`team-${team}`, 'active-team');
+            
+            const teamName = team.toUpperCase();
+            currentTeamDisplay.innerHTML = `<h4 class="font-bold text-${team}-700">${teamName} TEAM</h4>`;
+        }
+        
+        function passQuestion() {
+            // Find current team index
+            const currentIndex = teamOrder.indexOf(currentTeam);
+            // Get next team (wrapping around if needed)
+            const nextIndex = (currentIndex + 1) % teamOrder.length;
+            const nextTeam = teamOrder[nextIndex];
+            
+            // Decrease timer based on pass count
+            if (nextIndex === 0) {
+                // Back to first team, reset timer
+                timerValue = 40;
+            } else if (nextIndex === 1) {
+                timerValue = 30;
+            } else if (nextIndex === 2) {
+                timerValue = 20;
+            } else {
+                timerValue = 10;
+            }
+            
+            updateTimerDisplay();
+            setCurrentTeam(nextTeam);
+        }
+        
+        // Score functions
+        function addScore(team, points) {
+            scores[team] += points;
+            updateScoreDisplay(team);
+        }
+        
+        function updateScoreDisplay(team) {
+            const display = scoreDisplays[team];
+            display.textContent = scores[team];
+            
+            // Add animation class
+            display.classList.add('score-change');
+            setTimeout(() => {
+                display.classList.remove('score-change');
+            }, 500);
+        }
+        
+        function resetScores() {
+            for (const team in scores) {
+                scores[team] = 0;
+                updateScoreDisplay(team);
+            }
+        }
+        
+        // Question functions
+        function revealQuestion() {
+            questionCard.classList.remove('question-hidden');
+            
+            // Show the current question if available
+            if (questions.length > 0 && currentQuestion <= questions.length) {
+                questionCard.innerHTML = `<p class="text-lg">${questions[currentQuestion - 1].question}</p>`;
+            } else {
+                questionCard.innerHTML = '<p class="text-lg">Sample question text goes here.</p>';
+            }
+        }
+        
+        function nextQuestion() {
+            // Hide the question
+            questionCard.classList.add('question-hidden');
+            questionCard.innerHTML = '<p class="text-center text-gray-500">Question will appear here when revealed</p>';
+            
+            // Move to next question
+            currentQuestion++;
+            
+            // Reset timer and team
+            resetTimerFunction();
+            setCurrentTeam('red');
+        }
+        
+        // Admin functions
+        function loadQuestions() {
+            const url = document.getElementById('questions-url').value;
+            
+            if (url) {
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        questions = data;
+                        alert(`Successfully loaded ${questions.length} questions`);
+                    })
+                    .catch(error => {
+                        console.error('Error loading questions:', error);
+                        alert('Failed to load questions. Using sample questions instead.');
+                        loadSampleQuestions();
+                    });
+            } else {
+                alert('Please enter a valid URL');
+            }
+        }
+        
+        function loadSampleQuestions() {
+            questions = [
+                { question: "What is the capital of France?" },
+                { question: "Which planet is known as the Red Planet?" },
+                { question: "What is the largest mammal in the world?" },
+                { question: "In which year did World War II end?" },
+                { question: "Who painted the Mona Lisa?" }
+            ];
+        }
+        
+        function resetEverything() {
+            // Reset scores
+            resetScores();
+            
+            // Reset timer
+            resetTimerFunction();
+            
+            // Reset questions
+            currentQuestion = 1;
+            questionCard.classList.add('question-hidden');
+            questionCard.innerHTML = '<p class="text-center text-gray-500">Question will appear here when revealed</p>';
+            
+            // Reset team
+            setCurrentTeam('red');
+            
+            // Close modal
+            adminModal.classList.add('hidden');
+        }
+        
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
