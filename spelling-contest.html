@@ -134,6 +134,7 @@
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
         }
 
         .school-header {
@@ -223,6 +224,8 @@
             height: 100%;
             border-radius: 0;
             padding: 2rem;
+            max-width: none;
+            margin: 0;
         }
 
         :-webkit-full-screen .main-container {
@@ -230,6 +233,8 @@
             height: 100%;
             border-radius: 0;
             padding: 2rem;
+            max-width: none;
+            margin: 0;
         }
 
         :-moz-full-screen .main-container {
@@ -237,6 +242,8 @@
             height: 100%;
             border-radius: 0;
             padding: 2rem;
+            max-width: none;
+            margin: 0;
         }
 
         :-ms-fullscreen .main-container {
@@ -244,6 +251,90 @@
             height: 100%;
             border-radius: 0;
             padding: 2rem;
+            max-width: none;
+            margin: 0;
+        }
+
+        /* Winner badges */
+        .winner-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 20px;
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .winner-1 {
+            background: linear-gradient(45deg, #FFD700, #FFC000);
+            color: #000;
+            box-shadow: 0 0 15px #FFD700;
+        }
+
+        .winner-2 {
+            background: linear-gradient(45deg, #C0C0C0, #A0A0A0);
+            color: #000;
+            box-shadow: 0 0 15px #C0C0C0;
+        }
+
+        .winner-3 {
+            background: linear-gradient(45deg, #CD7F32, #A0522D);
+            color: #000;
+            box-shadow: 0 0 15px #CD7F32;
+        }
+
+        .winner-4 {
+            background: linear-gradient(45deg, #888888, #666666);
+            color: #fff;
+            box-shadow: 0 0 15px #888888;
+        }
+
+        /* Game over state */
+        .game-over .timer-section {
+            display: none;
+        }
+
+        .game-over .scoreboard-section {
+            width: 100%;
+        }
+
+        .game-over .house-card {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 20px;
+            aspect-ratio: unset;
+            min-height: 150px;
+        }
+
+        .game-over .house-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .game-over .house-card .score-display {
+            font-size: 4rem;
+        }
+
+        .game-over .house-card .house-name {
+            font-size: 2rem;
+        }
+
+        .game-over .house-card .score-controls {
+            display: none;
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
@@ -257,8 +348,13 @@
 
         <div class="flex flex-col lg:flex-row gap-8 items-stretch">
             <!-- Timer Section -->
-            <div class="flex-1 bg-gray-800/80 rounded-xl shadow-lg p-6 flex flex-col">
-                <h2 class="text-2xl font-semibold mb-6 section-title">⏳ Contest Timer</h2>
+            <div class="flex-1 bg-gray-800/80 rounded-xl shadow-lg p-6 flex flex-col timer-section">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-semibold section-title">⏳ Contest Timer</h2>
+                    <button id="end-game-btn" class="btn bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                        <i class="fas fa-flag-checkered mr-2"></i> END GAME
+                    </button>
+                </div>
                 
                 <div class="flex flex-col items-center justify-center gap-6 flex-grow">
                     <!-- Timer Circle -->
@@ -300,15 +396,16 @@
             </div>
 
             <!-- Scoreboard Section -->
-            <div class="flex-1 bg-gray-800/80 rounded-xl shadow-lg p-6 flex flex-col">
+            <div class="flex-1 bg-gray-800/80 rounded-xl shadow-lg p-6 flex flex-col scoreboard-section">
                 <h2 class="text-2xl font-semibold mb-6 section-title">🏆 House Scoreboard</h2>
                 
-                <div class="grid grid-cols-2 gap-4 flex-grow">
+                <div class="grid grid-cols-2 gap-4 flex-grow house-grid" id="house-grid">
+                    <!-- Houses will be dynamically reordered here -->
                     <!-- Red House -->
-                    <div class="house-card house-red rounded-lg p-4">
+                    <div class="house-card house-red rounded-lg p-4" data-house="red">
                         <h3 class="text-xl font-bold text-red-400 mb-2 house-name glow-text">Red House</h3>
                         <div class="score-display text-red-400 flex-grow flex items-center justify-center glow-text" id="red-score">0</div>
-                        <div class="flex justify-center gap-2">
+                        <div class="flex justify-center gap-2 score-controls">
                             <button class="btn bg-red-700/80 hover:bg-red-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="red">
                                 <i class="fas fa-minus"></i> 5
                             </button>
@@ -319,10 +416,10 @@
                     </div>
 
                     <!-- Green House -->
-                    <div class="house-card house-green rounded-lg p-4">
+                    <div class="house-card house-green rounded-lg p-4" data-house="green">
                         <h3 class="text-xl font-bold text-green-400 mb-2 house-name glow-text">Green House</h3>
                         <div class="score-display text-green-400 flex-grow flex items-center justify-center glow-text" id="green-score">0</div>
-                        <div class="flex justify-center gap-2">
+                        <div class="flex justify-center gap-2 score-controls">
                             <button class="btn bg-green-700/80 hover:bg-green-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="green">
                                 <i class="fas fa-minus"></i> 5
                             </button>
@@ -333,10 +430,10 @@
                     </div>
 
                     <!-- Yellow House -->
-                    <div class="house-card house-yellow rounded-lg p-4">
+                    <div class="house-card house-yellow rounded-lg p-4" data-house="yellow">
                         <h3 class="text-xl font-bold text-yellow-400 mb-2 house-name glow-text">Yellow House</h3>
                         <div class="score-display text-yellow-400 flex-grow flex items-center justify-center glow-text" id="yellow-score">0</div>
-                        <div class="flex justify-center gap-2">
+                        <div class="flex justify-center gap-2 score-controls">
                             <button class="btn bg-yellow-700/80 hover:bg-yellow-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="yellow">
                                 <i class="fas fa-minus"></i> 5
                             </button>
@@ -347,10 +444,10 @@
                     </div>
 
                     <!-- Blue House -->
-                    <div class="house-card house-blue rounded-lg p-4">
+                    <div class="house-card house-blue rounded-lg p-4" data-house="blue">
                         <h3 class="text-xl font-bold text-blue-400 mb-2 house-name glow-text">Blue House</h3>
                         <div class="score-display text-blue-400 flex-grow flex items-center justify-center glow-text" id="blue-score">0</div>
-                        <div class="flex justify-center gap-2">
+                        <div class="flex justify-center gap-2 score-controls">
                             <button class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="blue">
                                 <i class="fas fa-minus"></i> 5
                             </button>
@@ -360,6 +457,19 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen (hidden initially) -->
+        <div id="game-over-screen" class="hidden text-center py-10">
+            <h2 class="text-4xl font-bold text-white mb-10">🏆 Competition Results 🏆</h2>
+            <div class="max-w-3xl mx-auto">
+                <div id="final-scores" class="grid gap-6">
+                    <!-- Final scores will be inserted here -->
+                </div>
+                <button id="restart-game-btn" class="mt-10 btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg">
+                    <i class="fas fa-redo mr-2"></i> Start New Game
+                </button>
             </div>
         </div>
     </div>
@@ -428,6 +538,8 @@
         const resetBtn = document.getElementById('reset-timer');
         const passBtn = document.getElementById('pass-timer');
         const timeButtons = document.querySelectorAll('[data-time]');
+        const endGameBtn = document.getElementById('end-game-btn');
+        const restartGameBtn = document.getElementById('restart-game-btn');
         
         let timeLeft = 0;
         let timerInterval;
@@ -438,8 +550,8 @@
         
         // Audio elements
         const startSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3');
-        const endSound = new Audio('https://youtu.be/rdUt3No454w');
-        const buzzerSound = new Audio('https://youtu.be/rdUt3No454w');
+        const endSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3');
+        const buzzerSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-falling-buzzer-331.mp3');
         
         // Preload audio files
         function preloadAudio() {
@@ -482,7 +594,7 @@
         });
         
         // Start timer
-        startBtn.addEventListener('click', () => {
+        function startTimer() {
             if (timeLeft <= 0) return;
             
             clearInterval(timerInterval);
@@ -499,7 +611,9 @@
                     playBuzzerSound();
                 }
             }, 1000);
-        });
+        }
+        
+        startBtn.addEventListener('click', startTimer);
         
         // Pause timer
         pauseBtn.addEventListener('click', () => {
@@ -514,7 +628,7 @@
             resetProgressCircle();
         });
         
-        // Pass to next timer
+        // Pass to next timer and auto-start
         passBtn.addEventListener('click', () => {
             clearInterval(timerInterval);
             currentTimeIndex = (currentTimeIndex + 1) % timeOptions.length;
@@ -531,6 +645,9 @@
                     btn.classList.remove('ring-2', 'ring-white');
                 }
             });
+            
+            // Auto-start the new timer
+            startTimer();
         });
         
         function updateTimerDisplay() {
@@ -573,12 +690,15 @@
         
         const addButtons = document.querySelectorAll('.add-btn');
         const subtractButtons = document.querySelectorAll('.subtract-btn');
+        const houseGrid = document.getElementById('house-grid');
+        const houseCards = document.querySelectorAll('.house-card');
         
         addButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const house = button.dataset.house;
                 scores[house] += 5;
                 updateScore(house);
+                reorderHouses();
             });
         });
         
@@ -587,6 +707,7 @@
                 const house = button.dataset.house;
                 scores[house] = Math.max(0, scores[house] - 5);
                 updateScore(house);
+                reorderHouses();
             });
         });
         
@@ -594,8 +715,130 @@
             document.getElementById(`${house}-score`).textContent = scores[house];
         }
         
+        // Reorder houses based on scores
+        function reorderHouses() {
+            // Convert scores to array and sort
+            const sortedHouses = Object.entries(scores)
+                .sort((a, b) => b[1] - a[1])
+                .map(item => item[0]);
+            
+            // Reorder DOM elements
+            sortedHouses.forEach(house => {
+                const card = document.querySelector(`.house-card[data-house="${house}"]`);
+                houseGrid.appendChild(card);
+            });
+        }
+        
+        // End game functionality
+        endGameBtn.addEventListener('click', () => {
+            // Stop any running timer
+            clearInterval(timerInterval);
+            
+            // Play end sound
+            playEndSound();
+            playBuzzerSound();
+            
+            // Hide timer and scoreboard sections
+            document.querySelector('.timer-section').classList.add('hidden');
+            document.querySelector('.scoreboard-section').classList.add('hidden');
+            
+            // Show game over screen
+            const gameOverScreen = document.getElementById('game-over-screen');
+            gameOverScreen.classList.remove('hidden');
+            
+            // Display final scores with badges
+            displayFinalScores();
+        });
+        
+        // Display final scores in game over screen
+        function displayFinalScores() {
+            const finalScoresContainer = document.getElementById('final-scores');
+            finalScoresContainer.innerHTML = '';
+            
+            // Convert scores to array and sort
+            const sortedHouses = Object.entries(scores)
+                .sort((a, b) => b[1] - a[1])
+                .map(item => ({ house: item[0], score: item[1] }));
+            
+            // Create score cards with badges
+            sortedHouses.forEach((item, index) => {
+                const houseColor = {
+                    red: 'text-red-400',
+                    green: 'text-green-400',
+                    yellow: 'text-yellow-400',
+                    blue: 'text-blue-400'
+                }[item.house];
+                
+                const houseName = {
+                    red: 'Red House',
+                    green: 'Green House',
+                    yellow: 'Yellow House',
+                    blue: 'Blue House'
+                }[item.house];
+                
+                const medalClass = index === 0 ? 'winner-1' : 
+                                  index === 1 ? 'winner-2' : 
+                                  index === 2 ? 'winner-3' : 'winner-4';
+                
+                const medalText = index === 0 ? 'WINNER' : 
+                                 index === 1 ? '2nd PLACE' : 
+                                 index === 2 ? '3rd PLACE' : 'BETTER LUCK NEXT TIME';
+                
+                const scoreCard = document.createElement('div');
+                scoreCard.className = `house-card ${medalClass} p-6 flex items-center justify-between relative`;
+                scoreCard.innerHTML = `
+                    <div class="winner-badge ${medalClass}">${medalText}</div>
+                    <div class="flex items-center">
+                        <div>
+                            <h3 class="text-2xl font-bold ${houseColor}">${houseName}</h3>
+                            <p class="text-gray-300">Final Score</p>
+                        </div>
+                    </div>
+                    <div class="text-5xl font-bold ${houseColor}">${item.score}</div>
+                `;
+                
+                finalScoresContainer.appendChild(scoreCard);
+            });
+        }
+        
+        // Restart game functionality
+        restartGameBtn.addEventListener('click', () => {
+            // Reset scores
+            Object.keys(scores).forEach(house => {
+                scores[house] = 0;
+                updateScore(house);
+            });
+            
+            // Reorder houses to default
+            reorderHouses();
+            
+            // Hide game over screen
+            document.getElementById('game-over-screen').classList.add('hidden');
+            
+            // Show timer and scoreboard sections
+            document.querySelector('.timer-section').classList.remove('hidden');
+            document.querySelector('.scoreboard-section').classList.remove('hidden');
+            
+            // Reset timer
+            clearInterval(timerInterval);
+            timeLeft = 30;
+            totalTime = 30;
+            updateTimerDisplay();
+            resetProgressCircle();
+            
+            // Highlight first time button
+            timeButtons.forEach((btn, i) => {
+                if (i === 0) {
+                    btn.classList.add('ring-2', 'ring-white');
+                } else {
+                    btn.classList.remove('ring-2', 'ring-white');
+                }
+            });
+        });
+        
         // Initialize with first timer option selected
         timeButtons[0].click();
+        reorderHouses();
 
         // Add click sound to all buttons
         const buttons = document.querySelectorAll('button');
