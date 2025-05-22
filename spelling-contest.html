@@ -17,8 +17,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(31, 41, 55, 0.9) 100%), 
-                        url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjMDAwMDAwIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDVMNSAwWk02IDRMNCA2Wk0tMSAxTDEgLTFaIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiIHN0cm9rZS13aWR0aD0iMSI+PC9wYXRoPgo8L3N2Zz4=');
+            background: rgba(17, 24, 39, 0.9);
             color: var(--text);
             transition: all 0.3s ease;
             min-height: 100vh;
@@ -141,13 +140,10 @@
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
             letter-spacing: -0.5px;
-            background: linear-gradient(90deg, #60a5fa, #34d399, #fbbf24);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            color: #ffffff;
             position: relative;
             display: inline-block;
-            text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
 
         .school-header::after {
@@ -218,43 +214,6 @@
             }
         }
 
-        /* Fullscreen styles */
-        :fullscreen .main-container {
-            width: 100%;
-            height: 100%;
-            border-radius: 0;
-            padding: 2rem;
-            max-width: none;
-            margin: 0;
-        }
-
-        :-webkit-full-screen .main-container {
-            width: 100%;
-            height: 100%;
-            border-radius: 0;
-            padding: 2rem;
-            max-width: none;
-            margin: 0;
-        }
-
-        :-moz-full-screen .main-container {
-            width: 100%;
-            height: 100%;
-            border-radius: 0;
-            padding: 2rem;
-            max-width: none;
-            margin: 0;
-        }
-
-        :-ms-fullscreen .main-container {
-            width: 100%;
-            height: 100%;
-            border-radius: 0;
-            padding: 2rem;
-            max-width: none;
-            margin: 0;
-        }
-
         /* Winner badges */
         .winner-badge {
             position: absolute;
@@ -298,43 +257,29 @@
             box-shadow: 0 0 15px #888888;
         }
 
-        /* Game over state */
-        .game-over .timer-section {
-            display: none;
-        }
-
-        .game-over .scoreboard-section {
-            width: 100%;
-        }
-
-        .game-over .house-card {
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto 20px;
-            aspect-ratio: unset;
-            min-height: 150px;
-        }
-
-        .game-over .house-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .game-over .house-card .score-display {
-            font-size: 4rem;
-        }
-
-        .game-over .house-card .house-name {
-            font-size: 2rem;
-        }
-
-        .game-over .house-card .score-controls {
-            display: none;
-        }
-
         .hidden {
             display: none;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+            z-index: 9999;
+            animation: confetti-fall 5s linear forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -360,18 +305,18 @@
                     <!-- Timer Circle -->
                     <div class="timer-circle mx-auto">
                         <svg viewBox="0 0 200 200">
-                            <circle class="bg-circle" cx="100" cy="100" r="90" />
-                            <circle id="progress-circle" class="progress-circle" cx="100" cy="100" r="90" />
+                            <circle class="bg-circle" cx="100" cy="100" r="90"></circle>
+                            <circle id="progress-circle" class="progress-circle" cx="100" cy="100" r="90" style="stroke-dashoffset: 565; stroke: rgb(239, 68, 68);"></circle>
                         </svg>
                         <div class="absolute inset-0 flex items-center justify-center">
-                            <span id="timer-display" class="text-7xl font-bold glow-text">00</span>
+                            <span id="timer-display" class="text-7xl font-bold glow-text text-red-500">00</span>
                         </div>
                     </div>
 
                     <!-- Timer Controls -->
                     <div class="flex flex-col gap-4 w-full">
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                            <button class="timer-btn btn bg-blue-600/80 hover:bg-blue-700/80 text-white py-2 rounded-lg" data-time="30">30s</button>
+                            <button class="timer-btn btn bg-blue-600/80 hover:bg-blue-700/80 text-white py-2 rounded-lg ring-2 ring-white" data-time="30">30s</button>
                             <button class="timer-btn btn bg-green-600/80 hover:bg-green-700/80 text-white py-2 rounded-lg" data-time="20">20s</button>
                             <button class="timer-btn btn bg-yellow-600/80 hover:bg-yellow-700/80 text-white py-2 rounded-lg" data-time="15">15s</button>
                             <button class="timer-btn btn bg-red-600/80 hover:bg-red-700/80 text-white py-2 rounded-lg" data-time="15">15s</button>
@@ -404,7 +349,7 @@
                     <!-- Red House -->
                     <div class="house-card house-red rounded-lg p-4" data-house="red">
                         <h3 class="text-xl font-bold text-red-400 mb-2 house-name glow-text">Red House</h3>
-                        <div class="score-display text-red-400 flex-grow flex items-center justify-center glow-text" id="red-score">0</div>
+                        <div class="score-display text-red-400 flex-grow flex items-center justify-center glow-text" id="red-score">10</div>
                         <div class="flex justify-center gap-2 score-controls">
                             <button class="btn bg-red-700/80 hover:bg-red-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="red">
                                 <i class="fas fa-minus"></i> 5
@@ -414,7 +359,21 @@
                             </button>
                         </div>
                     </div>
-
+                    
+                    <!-- Blue House -->
+                    <div class="house-card house-blue rounded-lg p-4" data-house="blue">
+                        <h3 class="text-xl font-bold text-blue-400 mb-2 house-name glow-text">Blue House</h3>
+                        <div class="score-display text-blue-400 flex-grow flex items-center justify-center glow-text" id="blue-score">5</div>
+                        <div class="flex justify-center gap-2 score-controls">
+                            <button class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="blue">
+                                <i class="fas fa-minus"></i> 5
+                            </button>
+                            <button class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="blue">
+                                <i class="fas fa-plus"></i> 5
+                            </button>
+                        </div>
+                    </div>
+                    
                     <!-- Green House -->
                     <div class="house-card house-green rounded-lg p-4" data-house="green">
                         <h3 class="text-xl font-bold text-green-400 mb-2 house-name glow-text">Green House</h3>
@@ -428,7 +387,7 @@
                             </button>
                         </div>
                     </div>
-
+                    
                     <!-- Yellow House -->
                     <div class="house-card house-yellow rounded-lg p-4" data-house="yellow">
                         <h3 class="text-xl font-bold text-yellow-400 mb-2 house-name glow-text">Yellow House</h3>
@@ -442,34 +401,7 @@
                             </button>
                         </div>
                     </div>
-
-                    <!-- Blue House -->
-                    <div class="house-card house-blue rounded-lg p-4" data-house="blue">
-                        <h3 class="text-xl font-bold text-blue-400 mb-2 house-name glow-text">Blue House</h3>
-                        <div class="score-display text-blue-400 flex-grow flex items-center justify-center glow-text" id="blue-score">0</div>
-                        <div class="flex justify-center gap-2 score-controls">
-                            <button class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="blue">
-                                <i class="fas fa-minus"></i> 5
-                            </button>
-                            <button class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="blue">
-                                <i class="fas fa-plus"></i> 5
-                            </button>
-                        </div>
-                    </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Game Over Screen (hidden initially) -->
-        <div id="game-over-screen" class="hidden text-center py-10">
-            <h2 class="text-4xl font-bold text-white mb-10">🏆 Competition Results 🏆</h2>
-            <div class="max-w-3xl mx-auto">
-                <div id="final-scores" class="grid gap-6">
-                    <!-- Final scores will be inserted here -->
-                </div>
-                <button id="restart-game-btn" class="mt-10 btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg">
-                    <i class="fas fa-redo mr-2"></i> Start New Game
-                </button>
             </div>
         </div>
     </div>
@@ -539,7 +471,6 @@
         const passBtn = document.getElementById('pass-timer');
         const timeButtons = document.querySelectorAll('[data-time]');
         const endGameBtn = document.getElementById('end-game-btn');
-        const restartGameBtn = document.getElementById('restart-game-btn');
         
         let timeLeft = 0;
         let timerInterval;
@@ -609,6 +540,7 @@
                     clearInterval(timerInterval);
                     playEndSound();
                     playBuzzerSound();
+                    createConfetti();
                 }
             }, 1000);
         }
@@ -682,10 +614,10 @@
         
         // Scoreboard Logic
         const scores = {
-            red: 0,
+            red: 10,
             green: 0,
             yellow: 0,
-            blue: 0
+            blue: 5
         };
         
         const addButtons = document.querySelectorAll('.add-btn');
@@ -738,103 +670,63 @@
             playEndSound();
             playBuzzerSound();
             
-            // Hide timer and scoreboard sections
-            document.querySelector('.timer-section').classList.add('hidden');
-            document.querySelector('.scoreboard-section').classList.add('hidden');
+            // Add winner badges to house cards
+            addWinnerBadges();
             
-            // Show game over screen
-            const gameOverScreen = document.getElementById('game-over-screen');
-            gameOverScreen.classList.remove('hidden');
-            
-            // Display final scores with badges
-            displayFinalScores();
+            // Create confetti effect
+            createConfetti();
         });
         
-        // Display final scores in game over screen
-        function displayFinalScores() {
-            const finalScoresContainer = document.getElementById('final-scores');
-            finalScoresContainer.innerHTML = '';
+        // Add winner badges to house cards
+        function addWinnerBadges() {
+            // First remove any existing badges
+            document.querySelectorAll('.winner-badge').forEach(badge => badge.remove());
             
             // Convert scores to array and sort
             const sortedHouses = Object.entries(scores)
                 .sort((a, b) => b[1] - a[1])
                 .map(item => ({ house: item[0], score: item[1] }));
             
-            // Create score cards with badges
+            // Add badges to each house card
             sortedHouses.forEach((item, index) => {
-                const houseColor = {
-                    red: 'text-red-400',
-                    green: 'text-green-400',
-                    yellow: 'text-yellow-400',
-                    blue: 'text-blue-400'
-                }[item.house];
-                
-                const houseName = {
-                    red: 'Red House',
-                    green: 'Green House',
-                    yellow: 'Yellow House',
-                    blue: 'Blue House'
-                }[item.house];
+                const houseCard = document.querySelector(`.house-card[data-house="${item.house}"]`);
                 
                 const medalClass = index === 0 ? 'winner-1' : 
                                   index === 1 ? 'winner-2' : 
                                   index === 2 ? 'winner-3' : 'winner-4';
                 
-                const medalText = index === 0 ? 'WINNER' : 
-                                 index === 1 ? '2nd PLACE' : 
-                                 index === 2 ? '3rd PLACE' : 'BETTER LUCK NEXT TIME';
+                const medalText = index === 0 ? '🏆 WINNER' : 
+                                 index === 1 ? '🥈 2nd PLACE' : 
+                                 index === 2 ? '🥉 3rd PLACE' : 'PARTICIPANT';
                 
-                const scoreCard = document.createElement('div');
-                scoreCard.className = `house-card ${medalClass} p-6 flex items-center justify-between relative`;
-                scoreCard.innerHTML = `
-                    <div class="winner-badge ${medalClass}">${medalText}</div>
-                    <div class="flex items-center">
-                        <div>
-                            <h3 class="text-2xl font-bold ${houseColor}">${houseName}</h3>
-                            <p class="text-gray-300">Final Score</p>
-                        </div>
-                    </div>
-                    <div class="text-5xl font-bold ${houseColor}">${item.score}</div>
-                `;
+                const badge = document.createElement('div');
+                badge.className = `winner-badge ${medalClass}`;
+                badge.textContent = medalText;
                 
-                finalScoresContainer.appendChild(scoreCard);
+                houseCard.appendChild(badge);
             });
         }
         
-        // Restart game functionality
-        restartGameBtn.addEventListener('click', () => {
-            // Reset scores
-            Object.keys(scores).forEach(house => {
-                scores[house] = 0;
-                updateScore(house);
-            });
+        // Create confetti effect
+        function createConfetti() {
+            const colors = ['#FFD700', '#C0C0C0', '#CD7F32', '#FF0000', '#00FF00', '#0000FF', '#FFFFFF'];
             
-            // Reorder houses to default
-            reorderHouses();
-            
-            // Hide game over screen
-            document.getElementById('game-over-screen').classList.add('hidden');
-            
-            // Show timer and scoreboard sections
-            document.querySelector('.timer-section').classList.remove('hidden');
-            document.querySelector('.scoreboard-section').classList.remove('hidden');
-            
-            // Reset timer
-            clearInterval(timerInterval);
-            timeLeft = 30;
-            totalTime = 30;
-            updateTimerDisplay();
-            resetProgressCircle();
-            
-            // Highlight first time button
-            timeButtons.forEach((btn, i) => {
-                if (i === 0) {
-                    btn.classList.add('ring-2', 'ring-white');
-                } else {
-                    btn.classList.remove('ring-2', 'ring-white');
-                }
-            });
-        });
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+                document.body.appendChild(confetti);
+                
+                // Remove confetti after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
         
         // Initialize with first timer option selected
         timeButtons[0].click();
