@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Spelling Contest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #60a5fa;
+            --secondary: #34d399;
+            --accent: #fbbf24;
+            --text: #f3f4f6;
+            --bg: #111827;
+        }
+
+        body {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.9) 0%, rgba(31, 41, 55, 0.9) 100%), 
+                        url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjMDAwMDAwIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDVMNSAwWk02IDRMNCA2Wk0tMSAxTDEgLTFaIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiIHN0cm9rZS13aWR0aD0iMSI+PC9wYXRoPgo8L3N2Zz4=');
+            color: var(--text);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .timer-circle {
+            width: 220px;
+            height: 220px;
+            position: relative;
+        }
+
+        .timer-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .timer-circle circle {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+        }
+
+        .timer-circle .bg-circle {
+            stroke: rgba(255, 255, 255, 0.1);
+        }
+
+        .timer-circle .progress-circle {
+            stroke: var(--primary);
+            stroke-dasharray: 565;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .house-card {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            aspect-ratio: 1/1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 12px;
+            background: rgba(31, 41, 55, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .house-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            z-index: -1;
+            border-radius: 14px;
+            background: linear-gradient(45deg, 
+                rgba(255, 255, 255, 0.3), 
+                rgba(255, 255, 255, 0.1), 
+                rgba(255, 255, 255, 0.3));
+            background-size: 200% 200%;
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .house-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
+        }
+
+        .house-red {
+            border-left: 4px solid rgba(239, 68, 68, 0.8);
+        }
+
+        .house-green {
+            border-left: 4px solid rgba(34, 197, 94, 0.8);
+        }
+
+        .house-yellow {
+            border-left: 4px solid rgba(234, 179, 8, 0.8);
+        }
+
+        .house-blue {
+            border-left: 4px solid rgba(59, 130, 246, 0.8);
+        }
+
+        .btn {
+            transition: all 0.2s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn:hover {
+            filter: brightness(110%);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .timer-btn {
+            width: 80px;
+        }
+
+        .main-container {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .school-header {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #60a5fa, #34d399, #fbbf24);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            display: inline-block;
+            text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
+        }
+
+        .school-header::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 4px;
+            background: linear-gradient(90deg, #60a5fa, #34d399, #fbbf24);
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.25px;
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50%;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+            box-shadow: 0 0 8px rgba(96, 165, 250, 0.5);
+        }
+
+        .score-display {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 3.5rem;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .house-name {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.25px;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+        }
+
+        .glow-text {
+            text-shadow: 0 0 8px currentColor;
+        }
+
+        @media (max-width: 768px) {
+            .timer-circle {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .house-card {
+                padding: 1rem;
+            }
+            
+            .score-display {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 dark">
+    <div class="w-full max-w-6xl mx-auto main-container p-6 md:p-8">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold school-header mb-4">Shree Tikuligadh Secondary School</h1>
+            <p class="text-lg md:text-xl text-gray-300 font-medium">Annual Spelling Bee Competition 2023</p>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-8 items-stretch">
+            <!-- Timer Section -->
+            <div class="flex-1 bg-gray-800/80 rounded-xl shadow-lg p-6 flex flex-col">
+                <h2 class="text-2xl font-semibold mb-6 section-title">⏳ Contest Timer</h2>
+                
+                <div class="flex flex-col items-center justify-center gap-6 flex-grow">
+                    <!-- Timer Circle -->
+                    <div class="timer-circle mx-auto">
+                        <svg viewBox="0 0 200 200">
+                            <circle class="bg-circle" cx="100" cy="100" r="90" />
+                            <circle id="progress-circle" class="progress-circle" cx="100" cy="100" r="90" />
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span id="timer-display" class="text-7xl font-bold glow-text">00</span>
+                        </div>
+                    </div>
+
+                    <!-- Timer Controls -->
+                    <div class="flex flex-col gap-4 w-full">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                            <button class="timer-btn btn bg-blue-600/80 hover:bg-blue-700/80 text-white py-2 rounded-lg" data-time="45">45s</button>
+                            <button class="timer-btn btn bg-green-600/80 hover:bg-green-700/80 text-white py-2 rounded-lg" data-time="30">30s</button>
+                            <button class="timer-btn btn bg-yellow-600/80 hover:bg-yellow-700/80 text-white py-2 rounded-lg" data-time="20">20s</button>
+                            <button class="timer-btn btn bg-red-600/80 hover:bg-red-700/80 text-white py-2 rounded-lg" data-time="10">10s</button>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-2">
+                            <button id="start-timer" class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white py-2 rounded-lg">
+                                <i class="fas fa-play mr-1"></i> Start
+                            </button>
+                            <button id="pause-timer" class="btn bg-gray-700/80 hover:bg-gray-800/80 text-white py-2 rounded-lg">
+                                <i class="fas fa-pause mr-1"></i> Pause
+                            </button>
+                            <button id="reset-timer" class="btn bg-red-700/80 hover:bg-red-800/80 text-white py-2 rounded-lg">
+                                <i class="fas fa-redo mr-1"></i> Reset
+                            </button>
+                        </div>
+                        <button id="pass-timer" class="btn bg-purple-700/80 hover:bg-purple-800/80 text-white py-2 rounded-lg">
+                            <i class="fas fa-forward mr-1"></i> Pass
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scoreboard Section -->
+            <div class="flex-1 bg-gray-800/80 rounded-xl shadow-lg p-6 flex flex-col">
+                <h2 class="text-2xl font-semibold mb-6 section-title">🏆 House Scoreboard</h2>
+                
+                <div class="grid grid-cols-2 gap-4 flex-grow">
+                    <!-- Red House -->
+                    <div class="house-card house-red rounded-lg p-4">
+                        <h3 class="text-xl font-bold text-red-400 mb-2 house-name glow-text">Red House</h3>
+                        <div class="score-display text-red-400 flex-grow flex items-center justify-center glow-text" id="red-score">0</div>
+                        <div class="flex justify-center gap-2">
+                            <button class="btn bg-red-700/80 hover:bg-red-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="red">
+                                <i class="fas fa-minus"></i> 5
+                            </button>
+                            <button class="btn bg-red-700/80 hover:bg-red-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="red">
+                                <i class="fas fa-plus"></i> 5
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Green House -->
+                    <div class="house-card house-green rounded-lg p-4">
+                        <h3 class="text-xl font-bold text-green-400 mb-2 house-name glow-text">Green House</h3>
+                        <div class="score-display text-green-400 flex-grow flex items-center justify-center glow-text" id="green-score">0</div>
+                        <div class="flex justify-center gap-2">
+                            <button class="btn bg-green-700/80 hover:bg-green-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="green">
+                                <i class="fas fa-minus"></i> 5
+                            </button>
+                            <button class="btn bg-green-700/80 hover:bg-green-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="green">
+                                <i class="fas fa-plus"></i> 5
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Yellow House -->
+                    <div class="house-card house-yellow rounded-lg p-4">
+                        <h3 class="text-xl font-bold text-yellow-400 mb-2 house-name glow-text">Yellow House</h3>
+                        <div class="score-display text-yellow-400 flex-grow flex items-center justify-center glow-text" id="yellow-score">0</div>
+                        <div class="flex justify-center gap-2">
+                            <button class="btn bg-yellow-700/80 hover:bg-yellow-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="yellow">
+                                <i class="fas fa-minus"></i> 5
+                            </button>
+                            <button class="btn bg-yellow-700/80 hover:bg-yellow-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="yellow">
+                                <i class="fas fa-plus"></i> 5
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Blue House -->
+                    <div class="house-card house-blue rounded-lg p-4">
+                        <h3 class="text-xl font-bold text-blue-400 mb-2 house-name glow-text">Blue House</h3>
+                        <div class="score-display text-blue-400 flex-grow flex items-center justify-center glow-text" id="blue-score">0</div>
+                        <div class="flex justify-center gap-2">
+                            <button class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="blue">
+                                <i class="fas fa-minus"></i> 5
+                            </button>
+                            <button class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="blue">
+                                <i class="fas fa-plus"></i> 5
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <div class="fixed bottom-4 right-4">
+        <button id="theme-toggle" class="p-3 rounded-full bg-gray-700 shadow-lg hover:shadow-xl transition-shadow">
+            <i class="fas fa-sun text-yellow-300"></i>
+        </button>
+    </div>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        });
+
+        // Timer Logic
+        const timerDisplay = document.getElementById('timer-display');
+        const progressCircle = document.getElementById('progress-circle');
+        const startBtn = document.getElementById('start-timer');
+        const pauseBtn = document.getElementById('pause-timer');
+        const resetBtn = document.getElementById('reset-timer');
+        const passBtn = document.getElementById('pass-timer');
+        const timeButtons = document.querySelectorAll('[data-time]');
+        
+        let timeLeft = 0;
+        let timerInterval;
+        let totalTime = 0;
+        const circumference = 565; // 2πr ≈ 565 (r=90)
+        const timeOptions = [45, 30, 20, 10];
+        let currentTimeIndex = 0;
+        
+        // Audio
+        const startSound = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...'); // Short beep
+        const endSound = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...'); // Longer beep
+        
+        function playStartSound() {
+            startSound.currentTime = 0;
+            startSound.play();
+        }
+        
+        function playEndSound() {
+            endSound.currentTime = 0;
+            endSound.play();
+        }
+        
+        // Set timer duration
+        timeButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                timeLeft = parseInt(button.dataset.time);
+                totalTime = timeLeft;
+                currentTimeIndex = index;
+                updateTimerDisplay();
+                resetProgressCircle();
+                
+                // Highlight selected button
+                timeButtons.forEach(btn => btn.classList.remove('ring-2', 'ring-white'));
+                button.classList.add('ring-2', 'ring-white');
+            });
+        });
+        
+        // Start timer
+        startBtn.addEventListener('click', () => {
+            if (timeLeft <= 0) return;
+            
+            clearInterval(timerInterval);
+            playStartSound();
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                updateProgressCircle();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    playEndSound();
+                }
+            }, 1000);
+        });
+        
+        // Pause timer
+        pauseBtn.addEventListener('click', () => {
+            clearInterval(timerInterval);
+        });
+        
+        // Reset timer
+        resetBtn.addEventListener('click', () => {
+            clearInterval(timerInterval);
+            timeLeft = totalTime;
+            updateTimerDisplay();
+            resetProgressCircle();
+        });
+        
+        // Pass to next timer
+        passBtn.addEventListener('click', () => {
+            clearInterval(timerInterval);
+            currentTimeIndex = (currentTimeIndex + 1) % timeOptions.length;
+            timeLeft = timeOptions[currentTimeIndex];
+            totalTime = timeLeft;
+            updateTimerDisplay();
+            resetProgressCircle();
+            
+            // Highlight the corresponding time button
+            timeButtons.forEach((btn, i) => {
+                if (i === currentTimeIndex) {
+                    btn.classList.add('ring-2', 'ring-white');
+                } else {
+                    btn.classList.remove('ring-2', 'ring-white');
+                }
+            });
+        });
+        
+        function updateTimerDisplay() {
+            timerDisplay.textContent = timeLeft.toString().padStart(2, '0');
+        }
+        
+        function updateProgressCircle() {
+            const offset = circumference - (timeLeft / totalTime) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+        }
+        
+        function resetProgressCircle() {
+            progressCircle.style.strokeDashoffset = 0;
+        }
+        
+        // Scoreboard Logic
+        const scores = {
+            red: 0,
+            green: 0,
+            yellow: 0,
+            blue: 0
+        };
+        
+        const addButtons = document.querySelectorAll('.add-btn');
+        const subtractButtons = document.querySelectorAll('.subtract-btn');
+        
+        addButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const house = button.dataset.house;
+                scores[house] += 5;
+                updateScore(house);
+            });
+        });
+        
+        subtractButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const house = button.dataset.house;
+                scores[house] = Math.max(0, scores[house] - 5);
+                updateScore(house);
+            });
+        });
+        
+        function updateScore(house) {
+            document.getElementById(`${house}-score`).textContent = scores[house];
+        }
+    </script>
+</body>
+</html>
