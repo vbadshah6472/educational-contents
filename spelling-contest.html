@@ -216,6 +216,35 @@
                 font-size: 2.5rem;
             }
         }
+
+        /* Fullscreen styles */
+        :fullscreen .main-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            padding: 2rem;
+        }
+
+        :-webkit-full-screen .main-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            padding: 2rem;
+        }
+
+        :-moz-full-screen .main-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            padding: 2rem;
+        }
+
+        :-ms-fullscreen .main-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            padding: 2rem;
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8 dark">
@@ -335,8 +364,11 @@
         </div>
     </div>
 
-    <!-- Theme Toggle Button -->
-    <div class="fixed bottom-4 right-4">
+    <!-- Control Buttons -->
+    <div class="fixed bottom-4 right-4 flex flex-col gap-3">
+        <button id="fullscreen-btn" class="p-3 rounded-full bg-gray-700 shadow-lg hover:shadow-xl transition-shadow">
+            <i class="fas fa-expand text-white"></i>
+        </button>
         <button id="theme-toggle" class="p-3 rounded-full bg-gray-700 shadow-lg hover:shadow-xl transition-shadow">
             <i class="fas fa-sun text-yellow-300"></i>
         </button>
@@ -350,6 +382,43 @@
             document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
         });
+
+        // Fullscreen functionality
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const mainContainer = document.querySelector('.main-container');
+        
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                if (mainContainer.requestFullscreen) {
+                    mainContainer.requestFullscreen();
+                } else if (mainContainer.webkitRequestFullscreen) {
+                    mainContainer.webkitRequestFullscreen();
+                } else if (mainContainer.msRequestFullscreen) {
+                    mainContainer.msRequestFullscreen();
+                }
+                fullscreenBtn.innerHTML = '<i class="fas fa-compress text-white"></i>';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand text-white"></i>';
+            }
+        });
+
+        // Update fullscreen button icon when exiting fullscreen via other methods
+        document.addEventListener('fullscreenchange', updateFullscreenButton);
+        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+        document.addEventListener('msfullscreenchange', updateFullscreenButton);
+
+        function updateFullscreenButton() {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                fullscreenBtn.innerHTML = '<i class="fas fa-expand text-white"></i>';
+            }
+        }
 
         // Timer Logic
         const timerDisplay = document.getElementById('timer-display');
@@ -367,22 +436,34 @@
         const timeOptions = [30, 20, 15, 15];
         let currentTimeIndex = 0;
         
-        // Audio - Using base64 encoded short audio clips for buzzer sounds
-        const startSound = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...');
-        const endSound = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...');
+        // Audio elements
+        const startSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3');
+        const endSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+        const buzzerSound = new Audio('https://youtu.be/rdUt3No454w');
         
-        // Buzzer sounds from YouTube link (simplified representation)
-        const buzzerSound = new Audio();
-        buzzerSound.src = "https://youtu.be/rdUt3No454w"; // Placeholder for buzzer sound
+        // Preload audio files
+        function preloadAudio() {
+            startSound.load();
+            endSound.load();
+            buzzerSound.load();
+        }
+        
+        // Call preload on page load
+        window.addEventListener('load', preloadAudio);
         
         function playStartSound() {
             startSound.currentTime = 0;
-            startSound.play();
+            startSound.play().catch(e => console.log("Audio play error:", e));
         }
         
         function playEndSound() {
+            endSound.currentTime = 0;
+            endSound.play().catch(e => console.log("Audio play error:", e));
+        }
+        
+        function playBuzzerSound() {
             buzzerSound.currentTime = 0;
-            buzzerSound.play();
+            buzzerSound.play().catch(e => console.log("Audio play error:", e));
         }
         
         // Set timer duration
@@ -415,6 +496,7 @@
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     playEndSound();
+                    playBuzzerSound();
                 }
             }, 1000);
         });
@@ -514,6 +596,17 @@
         
         // Initialize with first timer option selected
         timeButtons[0].click();
+
+        // Add click sound to all buttons
+        const buttons = document.querySelectorAll('button');
+        const clickSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3');
+        
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                clickSound.currentTime = 0;
+                clickSound.play().catch(e => console.log("Button click sound error:", e));
+            });
+        });
     </script>
 </body>
 </html>
