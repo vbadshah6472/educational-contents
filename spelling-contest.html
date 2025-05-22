@@ -246,10 +246,10 @@
                     <!-- Timer Controls -->
                     <div class="flex flex-col gap-4 w-full">
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                            <button class="timer-btn btn bg-blue-600/80 hover:bg-blue-700/80 text-white py-2 rounded-lg" data-time="45">45s</button>
-                            <button class="timer-btn btn bg-green-600/80 hover:bg-green-700/80 text-white py-2 rounded-lg" data-time="30">30s</button>
-                            <button class="timer-btn btn bg-yellow-600/80 hover:bg-yellow-700/80 text-white py-2 rounded-lg" data-time="20">20s</button>
-                            <button class="timer-btn btn bg-red-600/80 hover:bg-red-700/80 text-white py-2 rounded-lg" data-time="10">10s</button>
+                            <button class="timer-btn btn bg-blue-600/80 hover:bg-blue-700/80 text-white py-2 rounded-lg" data-time="30">30s</button>
+                            <button class="timer-btn btn bg-green-600/80 hover:bg-green-700/80 text-white py-2 rounded-lg" data-time="20">20s</button>
+                            <button class="timer-btn btn bg-yellow-600/80 hover:bg-yellow-700/80 text-white py-2 rounded-lg" data-time="15">15s</button>
+                            <button class="timer-btn btn bg-red-600/80 hover:bg-red-700/80 text-white py-2 rounded-lg" data-time="15">15s</button>
                         </div>
                         
                         <div class="grid grid-cols-3 gap-2">
@@ -364,12 +364,16 @@
         let timerInterval;
         let totalTime = 0;
         const circumference = 565; // 2πr ≈ 565 (r=90)
-        const timeOptions = [45, 30, 20, 10];
+        const timeOptions = [30, 20, 15, 15];
         let currentTimeIndex = 0;
         
-        // Audio
-        const startSound = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...'); // Short beep
-        const endSound = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...'); // Longer beep
+        // Audio - Using base64 encoded short audio clips for buzzer sounds
+        const startSound = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...');
+        const endSound = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...');
+        
+        // Buzzer sounds from YouTube link (simplified representation)
+        const buzzerSound = new Audio();
+        buzzerSound.src = "https://www.soundjay.com/buttons/sounds/button-09.mp3"; // Placeholder for buzzer sound
         
         function playStartSound() {
             startSound.currentTime = 0;
@@ -377,8 +381,8 @@
         }
         
         function playEndSound() {
-            endSound.currentTime = 0;
-            endSound.play();
+            buzzerSound.currentTime = 0;
+            buzzerSound.play();
         }
         
         // Set timer duration
@@ -449,15 +453,32 @@
         
         function updateTimerDisplay() {
             timerDisplay.textContent = timeLeft.toString().padStart(2, '0');
+            
+            // Flash red when time is running low
+            if (timeLeft <= 5) {
+                timerDisplay.classList.add('text-red-500');
+                timerDisplay.classList.remove('text-white');
+            } else {
+                timerDisplay.classList.remove('text-red-500');
+                timerDisplay.classList.add('text-white');
+            }
         }
         
         function updateProgressCircle() {
             const offset = circumference - (timeLeft / totalTime) * circumference;
             progressCircle.style.strokeDashoffset = offset;
+            
+            // Change color when time is running low
+            if (timeLeft <= 5) {
+                progressCircle.style.stroke = '#ef4444';
+            } else {
+                progressCircle.style.stroke = '#60a5fa';
+            }
         }
         
         function resetProgressCircle() {
             progressCircle.style.strokeDashoffset = 0;
+            progressCircle.style.stroke = '#60a5fa';
         }
         
         // Scoreboard Logic
@@ -490,6 +511,9 @@
         function updateScore(house) {
             document.getElementById(`${house}-score`).textContent = scores[house];
         }
+        
+        // Initialize with first timer option selected
+        timeButtons[0].click();
     </script>
 </body>
 </html>
