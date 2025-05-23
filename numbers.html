@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spelling Contest Number Grid | SHREE TIKULIGADH SECONDARY SCHOOL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .number-cell {
+            transition: all 0.3s ease;
+        }
+        .number-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .number-cell.selected {
+            animation: pulse 0.5s;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .dark .school-header {
+            background-color: #1e293b;
+        }
+        .tab-history-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Dark mode toggle -->
+        <div class="flex justify-between mb-4">
+            <button id="previousTabBtn" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded transition flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Previous TAB
+            </button>
+            <button id="themeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+                <i id="themeIcon" class="fas fa-moon"></i>
+            </button>
+        </div>
+
+        <!-- Header Section -->
+        <header class="text-center mb-8">
+            <div class="mb-4">
+                <h1 class="text-3xl font-bold text-indigo-800 dark:text-indigo-300">SHREE TIKULIGADH SECONDARY SCHOOL</h1>
+                <p class="text-gray-600 dark:text-gray-400">Tilottama-14, Rupandehi | ESTD 2018</p>
+            </div>
+            <div class="school-header bg-indigo-700 dark:bg-indigo-900 text-white py-3 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold">Spelling Contest Number Grid</h2>
+                <p class="text-indigo-100 dark:text-indigo-300">Select numbers to mark as used</p>
+            </div>
+        </header>
+
+        <!-- Instructions -->
+        <div class="bg-yellow-50 dark:bg-yellow-900 border-l-4 border-yellow-400 dark:border-yellow-600 p-4 mb-8 rounded">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle text-yellow-500 dark:text-yellow-300 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-yellow-800 dark:text-yellow-200">Instructions</h3>
+                    <div class="mt-2 text-sm text-yellow-700 dark:text-yellow-300">
+                        <p>Click on any number to mark it as used (highlighted in red). Available numbers are shown in green.</p>
+                        <p class="mt-1">Use the "Previous TAB" button to navigate back while preserving your current selections.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Number Grid -->
+        <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4 mb-8" id="numberGrid">
+            <!-- Numbers will be generated here -->
+        </div>
+
+        <!-- Controls -->
+        <div class="flex flex-wrap justify-center gap-4 mb-8">
+            <button id="resetBtn" class="px-4 py-2 bg-red-500 hover:bg-red-600 dark:bg-red-700 dark:hover:bg-red-800 text-white rounded transition flex items-center">
+                <i class="fas fa-undo mr-2"></i> Reset All
+            </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg mb-8">
+            <div class="grid grid-cols-2 gap-4 text-center">
+                <div class="bg-white dark:bg-gray-700 p-3 rounded-lg shadow">
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Available</p>
+                    <p id="availableCount" class="text-2xl font-bold text-green-600 dark:text-green-400">32</p>
+                </div>
+                <div class="bg-white dark:bg-gray-700 p-3 rounded-lg shadow">
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Used</p>
+                    <p id="usedCount" class="text-2xl font-bold text-red-600 dark:text-red-400">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 dark:text-gray-400 text-sm mt-8 border-t border-gray-200 dark:border-gray-700 pt-4">
+            <p>© 2023 SHREE TIKULIGADH SECONDARY SCHOOL. All rights reserved.</p>
+            <p class="mt-1">Developed for the annual spelling contest</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const gridContainer = document.getElementById('numberGrid');
+            const resetBtn = document.getElementById('resetBtn');
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const availableCount = document.getElementById('availableCount');
+            const usedCount = document.getElementById('usedCount');
+            const previousTabBtn = document.getElementById('previousTabBtn');
+            
+            let usedNumbers = 0;
+            let numberStates = {};
+            
+            // Check for saved theme preference
+            if (localStorage.getItem('color-theme') === 'dark' || (!localStorage.getItem('color-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            }
+            
+            // Theme toggle
+            themeToggle.addEventListener('click', function() {
+                if (localStorage.getItem('color-theme')) {
+                    if (localStorage.getItem('color-theme') === 'light') {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                        themeIcon.classList.replace('fa-moon', 'fa-sun');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                        themeIcon.classList.replace('fa-sun', 'fa-moon');
+                    }
+                } else {
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                        themeIcon.classList.replace('fa-sun', 'fa-moon');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                        themeIcon.classList.replace('fa-moon', 'fa-sun');
+                    }
+                }
+            });
+            
+            // Generate number grid from 1 to 32
+            function generateNumberGrid() {
+                gridContainer.innerHTML = '';
+                
+                for (let i = 1; i <= 32; i++) {
+                    const numberCell = document.createElement('div');
+                    const isUsed = numberStates[i] === true;
+                    
+                    numberCell.className = `number-cell ${isUsed ? 'bg-red-500 dark:bg-red-700' : 'bg-green-500 dark:bg-green-700'} text-white rounded-lg shadow-md p-4 text-center text-2xl font-bold cursor-pointer flex items-center justify-center h-16`;
+                    numberCell.textContent = i;
+                    numberCell.dataset.number = i;
+                    numberCell.dataset.used = isUsed ? 'true' : 'false';
+                    
+                    if (isUsed) {
+                        const checkIcon = document.createElement('span');
+                        checkIcon.className = 'ml-2';
+                        checkIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                        numberCell.appendChild(checkIcon);
+                    }
+                    
+                    numberCell.addEventListener('click', function() {
+                        toggleNumberState(this);
+                    });
+                    
+                    gridContainer.appendChild(numberCell);
+                }
+                
+                updateCounters();
+            }
+            
+            // Toggle number state
+            function toggleNumberState(element) {
+                const number = parseInt(element.dataset.number);
+                const isUsed = element.dataset.used === 'true';
+                
+                if (isUsed) {
+                    // Mark as available
+                    element.classList.remove('bg-red-500', 'dark:bg-red-700');
+                    element.classList.add('bg-green-500', 'dark:bg-green-700');
+                    element.dataset.used = 'false';
+                    numberStates[number] = false;
+                    
+                    // Remove check icon
+                    const icon = element.querySelector('span');
+                    if (icon) icon.remove();
+                    
+                    usedNumbers--;
+                } else {
+                    // Mark as used
+                    element.classList.remove('bg-green-500', 'dark:bg-green-700');
+                    element.classList.add('bg-red-500', 'dark:bg-red-700', 'selected');
+                    element.dataset.used = 'true';
+                    numberStates[number] = true;
+                    
+                    // Add check icon
+                    const checkIcon = document.createElement('span');
+                    checkIcon.className = 'ml-2';
+                    checkIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                    element.appendChild(checkIcon);
+                    
+                    usedNumbers++;
+                }
+                
+                updateCounters();
+                saveState();
+            }
+            
+            // Update counters
+            function updateCounters() {
+                availableCount.textContent = 32 - usedNumbers;
+                usedCount.textContent = usedNumbers;
+            }
+            
+            // Save state to localStorage
+            function saveState() {
+                localStorage.setItem('numberGridState', JSON.stringify(numberStates));
+                localStorage.setItem('usedNumbersCount', usedNumbers);
+            }
+            
+            // Load state from localStorage
+            function loadState() {
+                const savedState = localStorage.getItem('numberGridState');
+                const savedCount = localStorage.getItem('usedNumbersCount');
+                
+                if (savedState) {
+                    numberStates = JSON.parse(savedState);
+                    usedNumbers = savedCount ? parseInt(savedCount) : 0;
+                } else {
+                    // Initialize empty state
+                    for (let i = 1; i <= 32; i++) {
+                        numberStates[i] = false;
+                    }
+                    usedNumbers = 0;
+                }
+            }
+            
+            // Reset all numbers
+            resetBtn.addEventListener('click', function() {
+                // Reset state
+                for (let i = 1; i <= 32; i++) {
+                    numberStates[i] = false;
+                }
+                usedNumbers = 0;
+                
+                // Regenerate grid
+                generateNumberGrid();
+                saveState();
+            });
+            
+            // Previous TAB functionality
+            previousTabBtn.addEventListener('click', function() {
+                // Save current state before navigating away
+                saveState();
+                
+                // Use window.history to go back
+                window.history.back();
+            });
+            
+            // Initialize
+            loadState();
+            generateNumberGrid();
+            
+            // Save state before page unload
+            window.addEventListener('beforeunload', function() {
+                saveState();
+            });
+        });
+    </script>
+</body>
+</html>
