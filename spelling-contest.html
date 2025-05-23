@@ -17,7 +17,11 @@
       transition: all 0.3s ease;
       min-height: 100vh;
     }
-    .number-cell { transition: all 0.3s ease; }
+    .number-cell { 
+      transition: all 0.3s ease; 
+      height: 40px;
+      width: 40px;
+    }
     .number-cell:hover { transform: scale(1.05); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
     .number-cell.selected { animation: pulse 0.5s; }
     @keyframes pulse {
@@ -301,7 +305,7 @@
       </div>
 
       <!-- Number Grid -->
-      <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4 mb-8" id="number-grid"></div>
+      <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3 mb-8" id="number-grid"></div>
 
       <!-- Controls -->
       <div class="flex flex-wrap justify-center gap-4 mb-8">
@@ -446,7 +450,7 @@
         <button id="fullscreen-btn" class="p-3 rounded-full bg-gray-700 shadow-lg hover:shadow-xl transition-shadow">
           <i class="fas fa-expand text-white"></i>
         </button>
-        <button id="theme-toggle" class="p-3 rounded-full bg-gray-700 shadow-lg hover:shadow-xl transition-shadow">
+        <button id="theme-toggle" class="p-3 rounded-full bg-gray-7 shadow-lg hover:shadow-xl transition-shadow">
           <i class="fas fa-sun text-yellow-300"></i>
         </button>
       </div>
@@ -515,7 +519,7 @@
 
       for (let i = 1; i <= 32; i++) {
         const numberCell = document.createElement('div');
-        numberCell.className = 'number-cell bg-green-500 dark:bg-green-700 text-white rounded-lg shadow-md p-4 text-center text-2xl font-bold cursor-pointer flex items-center justify-center h-16';
+        numberCell.className = 'number-cell bg-green-500 dark:bg-green-700 text-white rounded-lg shadow-md p-2 text-center font-bold cursor-pointer flex items-center justify-center';
         numberCell.textContent = i;
         numberCell.dataset.number = i;
         numberCell.dataset.used = 'false';
@@ -535,8 +539,8 @@
             this.dataset.used = 'true';
             usedNumbers++;
             const checkIcon = document.createElement('span');
-            checkIcon.className = 'ml-2';
-            checkIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            checkIcon.className = 'ml-1';
+            checkIcon.innerHTML = '<i class="fas fa-check-circle text-xs"></i>';
             this.appendChild(checkIcon);
           }
 
@@ -658,12 +662,14 @@
       });
       
       // Reset timer
-      resetBtnScoreboard.addEventListener('click', () => {
+      function resetTimerScoreboard() {
         clearInterval(timerIntervalScoreboard);
         timeLeft = totalTime;
         updateTimerDisplayScoreboard();
         resetProgressCircle();
-      });
+      }
+      
+      resetBtnScoreboard.addEventListener('click', resetTimerScoreboard);
       
       // Pass to next timer and auto-start
       passBtn.addEventListener('click', () => {
@@ -736,6 +742,7 @@
           scores[house] += 5;
           updateScore(house);
           reorderHouses();
+          resetTimerScoreboard(); // Reset timer when score is updated
         });
       });
       
@@ -745,6 +752,7 @@
           scores[house] = Math.max(0, scores[house] - 5);
           updateScore(house);
           reorderHouses();
+          resetTimerScoreboard(); // Reset timer when score is updated
         });
       });
       
