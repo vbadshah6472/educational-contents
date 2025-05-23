@@ -1,747 +1,901 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>School Spelling Contest</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #60a5fa;
-            --secondary: #34d399;
-            --accent: #fbbf24;
-            --text: #f3f4f6;
-            --bg: #111827;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>School Spelling Contest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700&display=swap" rel="stylesheet">
 
-        body {
-            background: rgba(17, 24, 39, 0.9);
-            color: var(--text);
-            transition: all 0.3s ease;
-            min-height: 100vh;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .timer-circle {
-            width: 220px;
-            height: 220px;
-            position: relative;
-        }
-
-        .timer-circle svg {
-            transform: rotate(-90deg);
-        }
-
-        .timer-circle circle {
-            fill: none;
-            stroke-width: 10;
-            stroke-linecap: round;
-        }
-
-        .timer-circle .bg-circle {
-            stroke: rgba(255, 255, 255, 0.1);
-        }
-
-        .timer-circle .progress-circle {
-            stroke: var(--primary);
-            stroke-dasharray: 565;
-            stroke-dashoffset: 0;
-            transition: stroke-dashoffset 1s linear;
-        }
-
-        .house-card {
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-            aspect-ratio: 1/1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            border-radius: 12px;
-            background: rgba(31, 41, 55, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .house-card::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            z-index: -1;
-            border-radius: 14px;
-            background: linear-gradient(45deg, 
-                rgba(255, 255, 255, 0.3), 
-                rgba(255, 255, 255, 0.1), 
-                rgba(255, 255, 255, 0.3));
-            background-size: 200% 200%;
-            animation: shine 3s linear infinite;
-        }
-
-        @keyframes shine {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .house-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
-        }
-
-        .house-red {
-            border-left: 4px solid rgba(239, 68, 68, 0.8);
-        }
-
-        .house-green {
-            border-left: 4px solid rgba(34, 197, 94, 0.8);
-        }
-
-        .house-yellow {
-            border-left: 4px solid rgba(234, 179, 8, 0.8);
-        }
-
-        .house-blue {
-            border-left: 4px solid rgba(59, 130, 246, 0.8);
-        }
-
-        .btn {
-            transition: all 0.2s ease;
-            backdrop-filter: blur(5px);
-        }
-
-        .btn:hover {
-            filter: brightness(110%);
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        .timer-btn {
-            width: 80px;
-        }
-
-        .main-container {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(15px);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .school-header {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            color: #ffffff;
-            position: relative;
-            display: inline-block;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
-
-        .school-header::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60%;
-            height: 4px;
-            background: linear-gradient(90deg, #60a5fa, #34d399, #fbbf24);
-            border-radius: 4px;
-            box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
-        }
-
-        .section-title {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            letter-spacing: -0.25px;
-            position: relative;
-            display: inline-block;
-            margin-bottom: 1.5rem;
-            color: var(--text);
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 50%;
-            height: 3px;
-            background: var(--primary);
-            border-radius: 3px;
-            box-shadow: 0 0 8px rgba(96, 165, 250, 0.5);
-        }
-
-        .score-display {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            font-size: 3.5rem;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-        }
-
-        .house-name {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 700;
-            letter-spacing: -0.25px;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
-        }
-
-        .glow-text {
-            text-shadow: 0 0 8px currentColor;
-        }
-
-        @media (max-width: 768px) {
-            .timer-circle {
-                width: 180px;
-                height: 180px;
-            }
-            
-            .house-card {
-                padding: 1rem;
-            }
-            
-            .score-display {
-                font-size: 2.5rem;
-            }
-        }
-
-        /* Winner badges */
-        .winner-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 20px;
-            z-index: 10;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .winner-1 {
-            background: linear-gradient(45deg, #FFD700, #FFC000);
-            color: #000;
-            box-shadow: 0 0 15px #FFD700;
-        }
-
-        .winner-2 {
-            background: linear-gradient(45deg, #C0C0C0, #A0A0A0);
-            color: #000;
-            box-shadow: 0 0 15px #C0C0C0;
-        }
-
-        .winner-3 {
-            background: linear-gradient(45deg, #CD7F32, #A0522D);
-            color: #000;
-            box-shadow: 0 0 15px #CD7F32;
-        }
-
-        .winner-4 {
-            background: linear-gradient(45deg, #888888, #666666);
-            color: #fff;
-            box-shadow: 0 0 15px #888888;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background-color: #f00;
-            opacity: 0;
-            z-index: 9999;
-            animation: confetti-fall 5s linear forwards;
-        }
-
-        @keyframes confetti-fall {
-            0% {
-                transform: translateY(-100vh) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-    </style>
+  <style>
+    body {
+      background: rgba(17, 24, 39, 0.9);
+      color: #f3f4f6;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+      min-height: 100vh;
+    }
+    .number-cell { transition: all 0.3s ease; }
+    .number-cell:hover { transform: scale(1.05); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+    .number-cell.selected { animation: pulse 0.5s; }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    .scoreboard-title {
+      font-family: 'Rubik', sans-serif;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .timer-display {
+      font-family: 'Rubik', sans-serif;
+      letter-spacing: 2px;
+    }
+    .panel-transition {
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .participant-card {
+      transition: all 0.3s ease;
+    }
+    .participant-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .timer-btn {
+      transition: all 0.2s ease;
+    }
+    .timer-btn:active {
+      transform: scale(0.95);
+    }
+    
+    /* Timer circle styles from the provided code */
+    .timer-circle {
+      width: 220px;
+      height: 220px;
+      position: relative;
+    }
+    .timer-circle svg {
+      transform: rotate(-90deg);
+    }
+    .timer-circle circle {
+      fill: none;
+      stroke-width: 10;
+      stroke-linecap: round;
+    }
+    .timer-circle .bg-circle {
+      stroke: rgba(255, 255, 255, 0.1);
+    }
+    .timer-circle .progress-circle {
+      stroke: #60a5fa;
+      stroke-dasharray: 565;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s linear;
+    }
+    .house-card {
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+      aspect-ratio: 1/1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 12px;
+      background: rgba(31, 41, 55, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .house-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      z-index: -1;
+      border-radius: 14px;
+      background: linear-gradient(45deg, 
+          rgba(255, 255, 255, 0.3), 
+          rgba(255, 255, 255, 0.1), 
+          rgba(255, 255, 255, 0.3));
+      background-size: 200% 200%;
+      animation: shine 3s linear infinite;
+    }
+    @keyframes shine {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .house-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
+    }
+    .house-red {
+      border-left: 4px solid rgba(239, 68, 68, 0.8);
+    }
+    .house-green {
+      border-left: 4px solid rgba(34, 197, 94, 0.8);
+    }
+    .house-yellow {
+      border-left: 4px solid rgba(234, 179, 8, 0.8);
+    }
+    .house-blue {
+      border-left: 4px solid rgba(59, 130, 246, 0.8);
+    }
+    .btn {
+      transition: all 0.2s ease;
+      backdrop-filter: blur(5px);
+    }
+    .btn:hover {
+      filter: brightness(110%);
+    }
+    .btn:active {
+      transform: scale(0.95);
+    }
+    .timer-btn {
+      width: 80px;
+    }
+    .school-header {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #ffffff;
+      position: relative;
+      display: inline-block;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+    .school-header::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 4px;
+      background: linear-gradient(90deg, #60a5fa, #34d399, #fbbf24);
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+    }
+    .section-title {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      letter-spacing: -0.25px;
+      position: relative;
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      color: #f3f4f6;
+    }
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 50%;
+      height: 3px;
+      background: #60a5fa;
+      border-radius: 3px;
+      box-shadow: 0 0 8px rgba(96, 165, 250, 0.5);
+    }
+    .score-display {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 3.5rem;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    }
+    .house-name {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.25px;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    }
+    .glow-text {
+      text-shadow: 0 0 8px currentColor;
+    }
+    @media (max-width: 768px) {
+      .timer-circle {
+        width: 180px;
+        height: 180px;
+      }
+      .house-card {
+        padding: 1rem;
+      }
+      .score-display {
+        font-size: 2.5rem;
+      }
+    }
+    /* Winner badges */
+    .winner-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 20px;
+      z-index: 10;
+      animation: pulse 2s infinite;
+    }
+    .winner-1 {
+      background: linear-gradient(45deg, #FFD700, #FFC000);
+      color: #000;
+      box-shadow: 0 0 15px #FFD700;
+    }
+    .winner-2 {
+      background: linear-gradient(45deg, #C0C0C0, #A0A0A0);
+      color: #000;
+      box-shadow: 0 0 15px #C0C0C0;
+    }
+    .winner-3 {
+      background: linear-gradient(45deg, #CD7F32, #A0522D);
+      color: #000;
+      box-shadow: 0 0 15px #CD7F32;
+    }
+    .winner-4 {
+      background: linear-gradient(45deg, #888888, #666666);
+      color: #fff;
+      box-shadow: 0 0 15px #888888;
+    }
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background-color: #f00;
+      opacity: 0;
+      z-index: 9999;
+      animation: confetti-fall 5s linear forwards;
+    }
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
-<body class="min-h-screen p-4 md:p-8 dark">
-    <div class="w-full max-w-6xl mx-auto main-container p-6 md:p-8">
-        <!-- Header -->
-        <div class="text-center mb-10">
-            <h1 class="text-4xl md:text-5xl font-bold school-header mb-4">Shree Tikuligadh Secondary School</h1>
-            <p class="text-lg md:text-xl text-gray-300 font-medium">Annual Spelling Bee Competition 2082</p>
-        </div>
 
-        <div class="flex flex-col lg:flex-row gap-8 items-stretch">
-            <!-- Timer Section -->
-            <div class="flex-1 bg-gray-800/80 rounded-xl shadow-lg p-6 flex flex-col timer-section">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-semibold section-title">⏳ Contest Timer</h2>
-                    <button id="end-game-btn" class="btn bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
-                        <i class="fas fa-flag-checkered mr-2"></i> END GAME
-                    </button>
-                </div>
-                
-                <div class="flex flex-col items-center justify-center gap-6 flex-grow">
-                    <!-- Timer Circle -->
-                    <div class="timer-circle mx-auto">
-                        <svg viewBox="0 0 200 200">
-                            <circle class="bg-circle" cx="100" cy="100" r="90"></circle>
-                            <circle id="progress-circle" class="progress-circle" cx="100" cy="100" r="90" style="stroke-dashoffset: 565; stroke: rgb(239, 68, 68);"></circle>
-                        </svg>
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <span id="timer-display" class="text-7xl font-bold glow-text text-red-500">00</span>
-                        </div>
-                    </div>
-
-                    <!-- Timer Controls -->
-                    <div class="flex flex-col gap-4 w-full">
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                            <button class="timer-btn btn bg-blue-600/80 hover:bg-blue-700/80 text-white py-2 rounded-lg ring-2 ring-white" data-time="30">30s</button>
-                            <button class="timer-btn btn bg-green-600/80 hover:bg-green-700/80 text-white py-2 rounded-lg" data-time="20">20s</button>
-                            <button class="timer-btn btn bg-yellow-600/80 hover:bg-yellow-700/80 text-white py-2 rounded-lg" data-time="15">15s</button>
-                            <button class="timer-btn btn bg-red-600/80 hover:bg-red-700/80 text-white py-2 rounded-lg" data-time="15">15s</button>
-                        </div>
-                        
-                        <div class="grid grid-cols-3 gap-2">
-                            <button id="start-timer" class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white py-2 rounded-lg">
-                                <i class="fas fa-play mr-1"></i> Start
-                            </button>
-                            <button id="pause-timer" class="btn bg-gray-700/80 hover:bg-gray-800/80 text-white py-2 rounded-lg">
-                                <i class="fas fa-pause mr-1"></i> Pause
-                            </button>
-                            <button id="reset-timer" class="btn bg-red-700/80 hover:bg-red-800/80 text-white py-2 rounded-lg">
-                                <i class="fas fa-redo mr-1"></i> Reset
-                            </button>
-                        </div>
-                        <button id="pass-timer" class="btn bg-purple-700/80 hover:bg-purple-800/80 text-white py-2 rounded-lg">
-                            <i class="fas fa-forward mr-1"></i> Pass
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Scoreboard Section -->
-            <div class="flex-1 bg-gray-800/80 rounded-xl shadow-lg p-6 flex flex-col scoreboard-section">
-                <h2 class="text-2xl font-semibold mb-6 section-title">🏆 House Scoreboard</h2>
-                
-                <div class="grid grid-cols-2 gap-4 flex-grow house-grid" id="house-grid">
-                    <!-- Houses will be dynamically reordered here -->
-                    <!-- Red House -->
-                    <div class="house-card house-red rounded-lg p-4" data-house="red">
-                        <h3 class="text-xl font-bold text-red-400 mb-2 house-name glow-text">Red House</h3>
-                        <div class="score-display text-red-400 flex-grow flex items-center justify-center glow-text" id="red-score">10</div>
-                        <div class="flex justify-center gap-2 score-controls">
-                            <button class="btn bg-red-700/80 hover:bg-red-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="red">
-                                <i class="fas fa-minus"></i> 5
-                            </button>
-                            <button class="btn bg-red-700/80 hover:bg-red-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="red">
-                                <i class="fas fa-plus"></i> 5
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Blue House -->
-                    <div class="house-card house-blue rounded-lg p-4" data-house="blue">
-                        <h3 class="text-xl font-bold text-blue-400 mb-2 house-name glow-text">Blue House</h3>
-                        <div class="score-display text-blue-400 flex-grow flex items-center justify-center glow-text" id="blue-score">5</div>
-                        <div class="flex justify-center gap-2 score-controls">
-                            <button class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="blue">
-                                <i class="fas fa-minus"></i> 5
-                            </button>
-                            <button class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="blue">
-                                <i class="fas fa-plus"></i> 5
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Green House -->
-                    <div class="house-card house-green rounded-lg p-4" data-house="green">
-                        <h3 class="text-xl font-bold text-green-400 mb-2 house-name glow-text">Green House</h3>
-                        <div class="score-display text-green-400 flex-grow flex items-center justify-center glow-text" id="green-score">0</div>
-                        <div class="flex justify-center gap-2 score-controls">
-                            <button class="btn bg-green-700/80 hover:bg-green-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="green">
-                                <i class="fas fa-minus"></i> 5
-                            </button>
-                            <button class="btn bg-green-700/80 hover:bg-green-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="green">
-                                <i class="fas fa-plus"></i> 5
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Yellow House -->
-                    <div class="house-card house-yellow rounded-lg p-4" data-house="yellow">
-                        <h3 class="text-xl font-bold text-yellow-400 mb-2 house-name glow-text">Yellow House</h3>
-                        <div class="score-display text-yellow-400 flex-grow flex items-center justify-center glow-text" id="yellow-score">0</div>
-                        <div class="flex justify-center gap-2 score-controls">
-                            <button class="btn bg-yellow-700/80 hover:bg-yellow-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="yellow">
-                                <i class="fas fa-minus"></i> 5
-                            </button>
-                            <button class="btn bg-yellow-700/80 hover:bg-yellow-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="yellow">
-                                <i class="fas fa-plus"></i> 5
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<body class="p-4 md:p-8 dark">
+  <div class="w-full max-w-6xl mx-auto main-container p-6 md:p-8 bg-gray-900/70 rounded-xl shadow-xl">
+    <!-- Header -->
+    <div class="text-center mb-10">
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-2 font-montserrat">Shree Tikuligadh Secondary School</h1>
+      <p class="text-lg md:text-xl text-indigo-300 font-medium">Annual Spelling Bee Competition 2082</p>
     </div>
 
-    <!-- Control Buttons -->
-    <div class="fixed bottom-4 right-4 flex flex-col gap-3">
+    <!-- TOGGLE BUTTONS -->
+    <div class="flex flex-wrap justify-center gap-4 mb-6">
+      <button onclick="toggleGrid()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg shadow transition-all flex items-center">
+        <i class="fas fa-th mr-2"></i>Number Grid
+      </button>
+      <button onclick="toggleScoreboard()" class="bg-amber-600 hover:bg-amber-700 text-white px-6 py-2 rounded-lg shadow transition-all flex items-center">
+        <i class="fas fa-stopwatch mr-2"></i>Scoreboard/Timer
+      </button>
+    </div>
+
+    <!-- TOGGLEABLE NUMBER GRID SECTION -->
+    <div id="number-grid-section" class="hidden panel-transition">
+      <!-- Header Section -->
+      <header class="text-center mb-8">
+        <div class="mb-4">
+          <h2 class="text-3xl font-bold text-indigo-300 font-rubik">Spelling Contest Number Grid</h2>
+          <p class="text-gray-400">Select numbers to mark as used</p>
+        </div>
+      </header>
+
+      <!-- Instructions -->
+      <div class="bg-gradient-to-r from-blue-900 to-indigo-900 border-l-4 border-blue-400 p-4 mb-8 rounded-lg shadow-lg">
+        <div class="flex items-start">
+          <i class="fas fa-info-circle text-blue-300 text-xl mt-1"></i>
+          <div class="ml-3">
+            <h3 class="text-lg font-semibold text-blue-100 font-rubik">HOW TO USE THE NUMBER GRID</h3>
+            <p class="text-blue-200 mt-2">
+              Click on any number to mark it as used (highlighted in red). Available numbers are shown in green.
+              Double-click to unmark a number. Use the reset button to clear all selections.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Number Grid -->
+      <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4 mb-8" id="number-grid"></div>
+
+      <!-- Controls -->
+      <div class="flex flex-wrap justify-center gap-4 mb-8">
+        <button id="resetBtn" class="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg shadow-lg flex items-center transition-all">
+          <i class="fas fa-undo mr-2"></i> Reset All Numbers
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="bg-gradient-to-r from-gray-800 to-gray-900 p-6 rounded-xl shadow-inner mb-8">
+        <div class="grid grid-cols-2 gap-6 text-center">
+          <div class="bg-gradient-to-br from-green-900 to-green-800 p-4 rounded-xl shadow-lg border border-green-700">
+            <p class="text-green-300 text-sm uppercase tracking-wider font-rubik">AVAILABLE</p>
+            <p id="availableCount" class="text-4xl font-bold text-green-400 mt-2">32</p>
+          </div>
+          <div class="bg-gradient-to-br from-red-900 to-red-800 p-4 rounded-xl shadow-lg border border-red-700">
+            <p class="text-red-300 text-sm uppercase tracking-wider font-rubik">USED</p>
+            <p id="usedCount" class="text-4xl font-bold text-red-400 mt-2">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOGGLEABLE SCOREBOARD/TIMER SECTION -->
+    <div id="scoreboard-section" class="hidden panel-transition">
+      <div class="flex flex-col lg:flex-row gap-8 items-stretch">
+        <!-- Timer Section -->
+        <div class="flex-1 bg-gray-800/80 rounded-xl shadow-lg p-6 flex flex-col timer-section">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold section-title">⏳ Contest Timer</h2>
+            <button id="end-game-btn" class="btn bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+              <i class="fas fa-flag-checkered mr-2"></i> END GAME
+            </button>
+          </div>
+          
+          <div class="flex flex-col items-center justify-center gap-6 flex-grow">
+            <!-- Timer Circle -->
+            <div class="timer-circle mx-auto">
+              <svg viewBox="0 0 200 200">
+                <circle class="bg-circle" cx="100" cy="100" r="90"></circle>
+                <circle id="progress-circle" class="progress-circle" cx="100" cy="100" r="90" style="stroke-dashoffset: 0; stroke: rgb(96, 165, 250);"></circle>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span id="timer-display" class="text-7xl font-bold glow-text text-white">30</span>
+              </div>
+            </div>
+
+            <!-- Timer Controls -->
+            <div class="flex flex-col gap-4 w-full">
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <button class="timer-btn btn bg-blue-600/80 hover:bg-blue-700/80 text-white py-2 rounded-lg ring-2 ring-white" data-time="30">30s</button>
+                <button class="timer-btn btn bg-green-600/80 hover:bg-green-700/80 text-white py-2 rounded-lg" data-time="20">20s</button>
+                <button class="timer-btn btn bg-yellow-600/80 hover:bg-yellow-700/80 text-white py-2 rounded-lg" data-time="15">15s</button>
+                <button class="timer-btn btn bg-red-600/80 hover:bg-red-700/80 text-white py-2 rounded-lg" data-time="15">15s</button>
+              </div>
+              
+              <div class="grid grid-cols-3 gap-2">
+                <button id="start-timer" class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white py-2 rounded-lg">
+                  <i class="fas fa-play mr-1"></i> Start
+                </button>
+                <button id="pause-timer" class="btn bg-gray-700/80 hover:bg-gray-800/80 text-white py-2 rounded-lg">
+                  <i class="fas fa-pause mr-1"></i> Pause
+                </button>
+                <button id="reset-timer" class="btn bg-red-700/80 hover:bg-red-800/80 text-white py-2 rounded-lg">
+                  <i class="fas fa-redo mr-1"></i> Reset
+                </button>
+              </div>
+              <button id="pass-timer" class="btn bg-purple-700/80 hover:bg-purple-800/80 text-white py-2 rounded-lg">
+                <i class="fas fa-forward mr-1"></i> Pass
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scoreboard Section -->
+        <div class="flex-1 bg-gray-800/80 rounded-xl shadow-lg p-6 flex flex-col scoreboard-section">
+          <h2 class="text-2xl font-semibold mb-6 section-title">🏆 House Scoreboard</h2>
+          
+          <div class="grid grid-cols-2 gap-4 flex-grow house-grid" id="house-grid">
+            <!-- Houses will be dynamically reordered here -->
+            <!-- Red House -->
+            <div class="house-card house-red rounded-lg p-4" data-house="red">
+              <h3 class="text-xl font-bold text-red-400 mb-2 house-name glow-text">Red House</h3>
+              <div class="score-display text-red-400 flex-grow flex items-center justify-center glow-text" id="red-score">10</div>
+              <div class="flex justify-center gap-2 score-controls">
+                <button class="btn bg-red-700/80 hover:bg-red-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="red">
+                  <i class="fas fa-minus"></i> 5
+                </button>
+                <button class="btn bg-red-700/80 hover:bg-red-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="red">
+                  <i class="fas fa-plus"></i> 5
+                </button>
+              </div>
+            </div>
+            
+            <!-- Blue House -->
+            <div class="house-card house-blue rounded-lg p-4" data-house="blue">
+              <h3 class="text-xl font-bold text-blue-400 mb-2 house-name glow-text">Blue House</h3>
+              <div class="score-display text-blue-400 flex-grow flex items-center justify-center glow-text" id="blue-score">5</div>
+              <div class="flex justify-center gap-2 score-controls">
+                <button class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="blue">
+                  <i class="fas fa-minus"></i> 5
+                </button>
+                <button class="btn bg-blue-700/80 hover:bg-blue-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="blue">
+                  <i class="fas fa-plus"></i> 5
+                </button>
+              </div>
+            </div>
+            
+            <!-- Green House -->
+            <div class="house-card house-green rounded-lg p-4" data-house="green">
+              <h3 class="text-xl font-bold text-green-400 mb-2 house-name glow-text">Green House</h3>
+              <div class="score-display text-green-400 flex-grow flex items-center justify-center glow-text" id="green-score">0</div>
+              <div class="flex justify-center gap-2 score-controls">
+                <button class="btn bg-green-700/80 hover:bg-green-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="green">
+                  <i class="fas fa-minus"></i> 5
+                </button>
+                <button class="btn bg-green-700/80 hover:bg-green-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="green">
+                  <i class="fas fa-plus"></i> 5
+                </button>
+              </div>
+            </div>
+            
+            <!-- Yellow House -->
+            <div class="house-card house-yellow rounded-lg p-4" data-house="yellow">
+              <h3 class="text-xl font-bold text-yellow-400 mb-2 house-name glow-text">Yellow House</h3>
+              <div class="score-display text-yellow-400 flex-grow flex items-center justify-center glow-text" id="yellow-score">0</div>
+              <div class="flex justify-center gap-2 score-controls">
+                <button class="btn bg-yellow-700/80 hover:bg-yellow-800/80 text-white px-3 py-1 rounded-lg subtract-btn" data-house="yellow">
+                  <i class="fas fa-minus"></i> 5
+                </button>
+                <button class="btn bg-yellow-700/80 hover:bg-yellow-800/80 text-white px-3 py-1 rounded-lg add-btn" data-house="yellow">
+                  <i class="fas fa-plus"></i> 5
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Control Buttons -->
+      <div class="fixed bottom-4 right-4 flex flex-col gap-3">
         <button id="fullscreen-btn" class="p-3 rounded-full bg-gray-700 shadow-lg hover:shadow-xl transition-shadow">
-            <i class="fas fa-expand text-white"></i>
+          <i class="fas fa-expand text-white"></i>
         </button>
         <button id="theme-toggle" class="p-3 rounded-full bg-gray-700 shadow-lg hover:shadow-xl transition-shadow">
-            <i class="fas fa-sun text-yellow-300"></i>
+          <i class="fas fa-sun text-yellow-300"></i>
         </button>
+      </div>
     </div>
+  </div>
 
-    <script>
-        // Theme Toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        
-        themeToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+  <!-- SCRIPTS -->
+  <script>
+    // Toggle between panels
+    function toggleGrid() {
+      const grid = document.getElementById("number-grid-section");
+      const scoreboard = document.getElementById("scoreboard-section");
+      grid.classList.remove("hidden");
+      scoreboard.classList.add("hidden");
+    }
+
+    function toggleScoreboard() {
+      const grid = document.getElementById("number-grid-section");
+      const scoreboard = document.getElementById("scoreboard-section");
+      grid.classList.add("hidden");
+      scoreboard.classList.remove("hidden");
+    }
+
+    // Timer functionality for number grid section
+    let timerInterval;
+    let totalSeconds = 0;
+
+    function startTimer() {
+      timerInterval = setInterval(function() {
+        totalSeconds++;
+        updateTimerDisplay();
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(timerInterval);
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      totalSeconds = 0;
+      updateTimerDisplay();
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      
+      document.getElementById('minutes').textContent = 
+        minutes < 10 ? '0' + minutes : minutes;
+      document.getElementById('seconds').textContent = 
+        seconds < 10 ? '0' + seconds : seconds;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Show scoreboard by default
+      toggleScoreboard();
+
+      // Number grid functionality
+      const gridContainer = document.getElementById('number-grid');
+      const resetBtn = document.getElementById('resetBtn');
+      const availableCount = document.getElementById('availableCount');
+      const usedCount = document.getElementById('usedCount');
+
+      let usedNumbers = 0;
+
+      for (let i = 1; i <= 32; i++) {
+        const numberCell = document.createElement('div');
+        numberCell.className = 'number-cell bg-green-500 dark:bg-green-700 text-white rounded-lg shadow-md p-4 text-center text-2xl font-bold cursor-pointer flex items-center justify-center h-16';
+        numberCell.textContent = i;
+        numberCell.dataset.number = i;
+        numberCell.dataset.used = 'false';
+
+        numberCell.addEventListener('click', function () {
+          const isUsed = this.dataset.used === 'true';
+          if (isUsed) {
+            this.classList.remove('bg-red-500', 'dark:bg-red-700');
+            this.classList.add('bg-green-500', 'dark:bg-green-700');
+            this.dataset.used = 'false';
+            usedNumbers--;
+            const icon = this.querySelector('span');
+            if (icon) icon.remove();
+          } else {
+            this.classList.remove('bg-green-500', 'dark:bg-green-700');
+            this.classList.add('bg-red-500', 'dark:bg-red-700', 'selected');
+            this.dataset.used = 'true';
+            usedNumbers++;
+            const checkIcon = document.createElement('span');
+            checkIcon.className = 'ml-2';
+            checkIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            this.appendChild(checkIcon);
+          }
+
+          availableCount.textContent = 32 - usedNumbers;
+          usedCount.textContent = usedNumbers;
         });
 
-        // Fullscreen functionality
-        const fullscreenBtn = document.getElementById('fullscreen-btn');
-        const mainContainer = document.querySelector('.main-container');
-        
-        fullscreenBtn.addEventListener('click', () => {
-            if (!document.fullscreenElement) {
-                if (mainContainer.requestFullscreen) {
-                    mainContainer.requestFullscreen();
-                } else if (mainContainer.webkitRequestFullscreen) {
-                    mainContainer.webkitRequestFullscreen();
-                } else if (mainContainer.msRequestFullscreen) {
-                    mainContainer.msRequestFullscreen();
-                }
-                fullscreenBtn.innerHTML = '<i class="fas fa-compress text-white"></i>';
-            } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
-                }
-                fullscreenBtn.innerHTML = '<i class="fas fa-expand text-white"></i>';
-            }
+        gridContainer.appendChild(numberCell);
+      }
+
+      resetBtn.addEventListener('click', function () {
+        const numbers = document.querySelectorAll('.number-cell');
+        numbers.forEach(num => {
+          num.classList.remove('bg-red-500', 'dark:bg-red-700', 'selected');
+          num.classList.add('bg-green-500', 'dark:bg-green-700');
+          num.dataset.used = 'false';
+          const icon = num.querySelector('span');
+          if (icon) icon.remove();
         });
 
-        // Update fullscreen button icon when exiting fullscreen via other methods
-        document.addEventListener('fullscreenchange', updateFullscreenButton);
-        document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
-        document.addEventListener('msfullscreenchange', updateFullscreenButton);
+        usedNumbers = 0;
+        availableCount.textContent = 32;
+        usedCount.textContent = 0;
+      });
 
-        function updateFullscreenButton() {
-            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-                fullscreenBtn.innerHTML = '<i class="fas fa-expand text-white"></i>';
-            }
-        }
+      // Timer event listeners for number grid section
+      document.getElementById('startTimer')?.addEventListener('click', startTimer);
+      document.getElementById('pauseTimer')?.addEventListener('click', pauseTimer);
+      document.getElementById('resetTimer')?.addEventListener('click', resetTimer);
 
-        // Timer Logic
-        const timerDisplay = document.getElementById('timer-display');
-        const progressCircle = document.getElementById('progress-circle');
-        const startBtn = document.getElementById('start-timer');
-        const pauseBtn = document.getElementById('pause-timer');
-        const resetBtn = document.getElementById('reset-timer');
-        const passBtn = document.getElementById('pass-timer');
-        const timeButtons = document.querySelectorAll('[data-time]');
-        const endGameBtn = document.getElementById('end-game-btn');
-        
-        let timeLeft = 0;
-        let timerInterval;
-        let totalTime = 0;
-        const circumference = 565; // 2πr ≈ 565 (r=90)
-        const timeOptions = [30, 20, 15, 15];
-        let currentTimeIndex = 0;
-        
-        // Audio elements
-        const startSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3');
-        const endSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3');
-        const buzzerSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-falling-buzzer-331.mp3');
-        
-        // Preload audio files
-        function preloadAudio() {
-            startSound.load();
-            endSound.load();
-            buzzerSound.load();
-        }
-        
-        // Call preload on page load
-        window.addEventListener('load', preloadAudio);
-        
-        function playStartSound() {
-            startSound.currentTime = 0;
-            startSound.play().catch(e => console.log("Audio play error:", e));
-        }
-        
-        function playEndSound() {
-            endSound.currentTime = 0;
-            endSound.play().catch(e => console.log("Audio play error:", e));
-        }
-        
-        function playBuzzerSound() {
-            buzzerSound.currentTime = 0;
-            buzzerSound.play().catch(e => console.log("Audio play error:", e));
-        }
-        
-        // Set timer duration
-        timeButtons.forEach((button, index) => {
-            button.addEventListener('click', () => {
-                timeLeft = parseInt(button.dataset.time);
-                totalTime = timeLeft;
-                currentTimeIndex = index;
-                updateTimerDisplay();
-                resetProgressCircle();
-                
-                // Highlight selected button
-                timeButtons.forEach(btn => btn.classList.remove('ring-2', 'ring-white'));
-                button.classList.add('ring-2', 'ring-white');
-            });
+      // Timer and scoreboard functionality from the provided code
+      const timerDisplay = document.getElementById('timer-display');
+      const progressCircle = document.getElementById('progress-circle');
+      const startBtn = document.getElementById('start-timer');
+      const pauseBtn = document.getElementById('pause-timer');
+      const resetBtnScoreboard = document.getElementById('reset-timer');
+      const passBtn = document.getElementById('pass-timer');
+      const timeButtons = document.querySelectorAll('[data-time]');
+      const endGameBtn = document.getElementById('end-game-btn');
+      
+      let timeLeft = 0;
+      let timerIntervalScoreboard;
+      let totalTime = 0;
+      const circumference = 565; // 2πr ≈ 565 (r=90)
+      const timeOptions = [30, 20, 15, 15];
+      let currentTimeIndex = 0;
+      
+      // Audio elements
+      const startSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3');
+      const endSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3');
+      const buzzerSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-falling-buzzer-331.mp3');
+      
+      // Preload audio files
+      function preloadAudio() {
+        startSound.load();
+        endSound.load();
+        buzzerSound.load();
+      }
+      
+      // Call preload on page load
+      window.addEventListener('load', preloadAudio);
+      
+      function playStartSound() {
+        startSound.currentTime = 0;
+        startSound.play().catch(e => console.log("Audio play error:", e));
+      }
+      
+      function playEndSound() {
+        endSound.currentTime = 0;
+        endSound.play().catch(e => console.log("Audio play error:", e));
+      }
+      
+      function playBuzzerSound() {
+        buzzerSound.currentTime = 0;
+        buzzerSound.play().catch(e => console.log("Audio play error:", e));
+      }
+      
+      // Set timer duration
+      timeButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+          timeLeft = parseInt(button.dataset.time);
+          totalTime = timeLeft;
+          currentTimeIndex = index;
+          updateTimerDisplayScoreboard();
+          resetProgressCircle();
+          
+          // Highlight selected button
+          timeButtons.forEach(btn => btn.classList.remove('ring-2', 'ring-white'));
+          button.classList.add('ring-2', 'ring-white');
         });
+      });
+      
+      // Start timer
+      function startTimerScoreboard() {
+        if (timeLeft <= 0) return;
         
-        // Start timer
-        function startTimer() {
-            if (timeLeft <= 0) return;
-            
-            clearInterval(timerInterval);
-            playStartSound();
-            
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-                updateProgressCircle();
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    playEndSound();
-                    playBuzzerSound();
-                    createConfetti();
-                }
-            }, 1000);
-        }
+        clearInterval(timerIntervalScoreboard);
+        playStartSound();
         
-        startBtn.addEventListener('click', startTimer);
-        
-        // Pause timer
-        pauseBtn.addEventListener('click', () => {
-            clearInterval(timerInterval);
-        });
-        
-        // Reset timer
-        resetBtn.addEventListener('click', () => {
-            clearInterval(timerInterval);
-            timeLeft = totalTime;
-            updateTimerDisplay();
-            resetProgressCircle();
-        });
-        
-        // Pass to next timer and auto-start
-        passBtn.addEventListener('click', () => {
-            clearInterval(timerInterval);
-            currentTimeIndex = (currentTimeIndex + 1) % timeOptions.length;
-            timeLeft = timeOptions[currentTimeIndex];
-            totalTime = timeLeft;
-            updateTimerDisplay();
-            resetProgressCircle();
-            
-            // Highlight the corresponding time button
-            timeButtons.forEach((btn, i) => {
-                if (i === currentTimeIndex) {
-                    btn.classList.add('ring-2', 'ring-white');
-                } else {
-                    btn.classList.remove('ring-2', 'ring-white');
-                }
-            });
-            
-            // Auto-start the new timer
-            startTimer();
-        });
-        
-        function updateTimerDisplay() {
-            timerDisplay.textContent = timeLeft.toString().padStart(2, '0');
-            
-            // Flash red when time is running low
-            if (timeLeft <= 5) {
-                timerDisplay.classList.add('text-red-500');
-                timerDisplay.classList.remove('text-white');
-            } else {
-                timerDisplay.classList.remove('text-red-500');
-                timerDisplay.classList.add('text-white');
-            }
-        }
-        
-        function updateProgressCircle() {
-            const offset = circumference - (timeLeft / totalTime) * circumference;
-            progressCircle.style.strokeDashoffset = offset;
-            
-            // Change color when time is running low
-            if (timeLeft <= 5) {
-                progressCircle.style.stroke = '#ef4444';
-            } else {
-                progressCircle.style.stroke = '#60a5fa';
-            }
-        }
-        
-        function resetProgressCircle() {
-            progressCircle.style.strokeDashoffset = 0;
-            progressCircle.style.stroke = '#60a5fa';
-        }
-        
-        // Scoreboard Logic
-        const scores = {
-            red: 10,
-            green: 0,
-            yellow: 0,
-            blue: 5
-        };
-        
-        const addButtons = document.querySelectorAll('.add-btn');
-        const subtractButtons = document.querySelectorAll('.subtract-btn');
-        const houseGrid = document.getElementById('house-grid');
-        const houseCards = document.querySelectorAll('.house-card');
-        
-        addButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const house = button.dataset.house;
-                scores[house] += 5;
-                updateScore(house);
-                reorderHouses();
-            });
-        });
-        
-        subtractButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const house = button.dataset.house;
-                scores[house] = Math.max(0, scores[house] - 5);
-                updateScore(house);
-                reorderHouses();
-            });
-        });
-        
-        function updateScore(house) {
-            document.getElementById(`${house}-score`).textContent = scores[house];
-        }
-        
-        // Reorder houses based on scores
-        function reorderHouses() {
-            // Convert scores to array and sort
-            const sortedHouses = Object.entries(scores)
-                .sort((a, b) => b[1] - a[1])
-                .map(item => item[0]);
-            
-            // Reorder DOM elements
-            sortedHouses.forEach(house => {
-                const card = document.querySelector(`.house-card[data-house="${house}"]`);
-                houseGrid.appendChild(card);
-            });
-        }
-        
-        // End game functionality
-        endGameBtn.addEventListener('click', () => {
-            // Stop any running timer
-            clearInterval(timerInterval);
-            
-            // Play end sound
+        timerIntervalScoreboard = setInterval(() => {
+          timeLeft--;
+          updateTimerDisplayScoreboard();
+          updateProgressCircle();
+          
+          if (timeLeft <= 0) {
+            clearInterval(timerIntervalScoreboard);
             playEndSound();
             playBuzzerSound();
-            
-            // Add winner badges to house cards
-            addWinnerBadges();
-            
-            // Create confetti effect
             createConfetti();
+          }
+        }, 1000);
+      }
+      
+      startBtn.addEventListener('click', startTimerScoreboard);
+      
+      // Pause timer
+      pauseBtn.addEventListener('click', () => {
+        clearInterval(timerIntervalScoreboard);
+      });
+      
+      // Reset timer
+      resetBtnScoreboard.addEventListener('click', () => {
+        clearInterval(timerIntervalScoreboard);
+        timeLeft = totalTime;
+        updateTimerDisplayScoreboard();
+        resetProgressCircle();
+      });
+      
+      // Pass to next timer and auto-start
+      passBtn.addEventListener('click', () => {
+        clearInterval(timerIntervalScoreboard);
+        currentTimeIndex = (currentTimeIndex + 1) % timeOptions.length;
+        timeLeft = timeOptions[currentTimeIndex];
+        totalTime = timeLeft;
+        updateTimerDisplayScoreboard();
+        resetProgressCircle();
+        
+        // Highlight the corresponding time button
+        timeButtons.forEach((btn, i) => {
+          if (i === currentTimeIndex) {
+            btn.classList.add('ring-2', 'ring-white');
+          } else {
+            btn.classList.remove('ring-2', 'ring-white');
+          }
         });
+        
+        // Auto-start the new timer
+        startTimerScoreboard();
+      });
+      
+      function updateTimerDisplayScoreboard() {
+        timerDisplay.textContent = timeLeft.toString().padStart(2, '0');
+        
+        // Flash red when time is running low
+        if (timeLeft <= 5) {
+          timerDisplay.classList.add('text-red-500');
+          timerDisplay.classList.remove('text-white');
+        } else {
+          timerDisplay.classList.remove('text-red-500');
+          timerDisplay.classList.add('text-white');
+        }
+      }
+      
+      function updateProgressCircle() {
+        const offset = circumference - (timeLeft / totalTime) * circumference;
+        progressCircle.style.strokeDashoffset = offset;
+        
+        // Change color when time is running low
+        if (timeLeft <= 5) {
+          progressCircle.style.stroke = '#ef4444';
+        } else {
+          progressCircle.style.stroke = '#60a5fa';
+        }
+      }
+      
+      function resetProgressCircle() {
+        progressCircle.style.strokeDashoffset = 0;
+        progressCircle.style.stroke = '#60a5fa';
+      }
+      
+      // Scoreboard Logic
+      const scores = {
+        red: 10,
+        green: 0,
+        yellow: 0,
+        blue: 5
+      };
+      
+      const addButtons = document.querySelectorAll('.add-btn');
+      const subtractButtons = document.querySelectorAll('.subtract-btn');
+      const houseGrid = document.getElementById('house-grid');
+      const houseCards = document.querySelectorAll('.house-card');
+      
+      addButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const house = button.dataset.house;
+          scores[house] += 5;
+          updateScore(house);
+          reorderHouses();
+        });
+      });
+      
+      subtractButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const house = button.dataset.house;
+          scores[house] = Math.max(0, scores[house] - 5);
+          updateScore(house);
+          reorderHouses();
+        });
+      });
+      
+      function updateScore(house) {
+        document.getElementById(`${house}-score`).textContent = scores[house];
+      }
+      
+      // Reorder houses based on scores
+      function reorderHouses() {
+        // Convert scores to array and sort
+        const sortedHouses = Object.entries(scores)
+          .sort((a, b) => b[1] - a[1])
+          .map(item => item[0]);
+        
+        // Reorder DOM elements
+        sortedHouses.forEach(house => {
+          const card = document.querySelector(`.house-card[data-house="${house}"]`);
+          houseGrid.appendChild(card);
+        });
+      }
+      
+      // End game functionality
+      endGameBtn.addEventListener('click', () => {
+        // Stop any running timer
+        clearInterval(timerIntervalScoreboard);
+        
+        // Play end sound
+        playEndSound();
+        playBuzzerSound();
         
         // Add winner badges to house cards
-        function addWinnerBadges() {
-            // First remove any existing badges
-            document.querySelectorAll('.winner-badge').forEach(badge => badge.remove());
-            
-            // Convert scores to array and sort
-            const sortedHouses = Object.entries(scores)
-                .sort((a, b) => b[1] - a[1])
-                .map(item => ({ house: item[0], score: item[1] }));
-            
-            // Add badges to each house card
-            sortedHouses.forEach((item, index) => {
-                const houseCard = document.querySelector(`.house-card[data-house="${item.house}"]`);
-                
-                const medalClass = index === 0 ? 'winner-1' : 
-                                  index === 1 ? 'winner-2' : 
-                                  index === 2 ? 'winner-3' : 'winner-4';
-                
-                const medalText = index === 0 ? '🏆 WINNER' : 
-                                 index === 1 ? '🥈 2nd PLACE' : 
-                                 index === 2 ? '🥉 3rd PLACE' : 'PARTICIPANT';
-                
-                const badge = document.createElement('div');
-                badge.className = `winner-badge ${medalClass}`;
-                badge.textContent = medalText;
-                
-                houseCard.appendChild(badge);
-            });
-        }
+        addWinnerBadges();
         
         // Create confetti effect
-        function createConfetti() {
-            const colors = ['#FFD700', '#C0C0C0', '#CD7F32', '#FF0000', '#00FF00', '#0000FF', '#FFFFFF'];
-            
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.width = Math.random() * 10 + 5 + 'px';
-                confetti.style.height = Math.random() * 10 + 5 + 'px';
-                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
-                document.body.appendChild(confetti);
-                
-                // Remove confetti after animation
-                setTimeout(() => {
-                    confetti.remove();
-                }, 5000);
-            }
-        }
+        createConfetti();
+      });
+      
+      // Add winner badges to house cards
+      function addWinnerBadges() {
+        // First remove any existing badges
+        document.querySelectorAll('.winner-badge').forEach(badge => badge.remove());
         
-        // Initialize with first timer option selected
-        timeButtons[0].click();
-        reorderHouses();
-
-        // Add click sound to all buttons
-        const buttons = document.querySelectorAll('button');
-        const clickSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3');
+        // Convert scores to array and sort
+        const sortedHouses = Object.entries(scores)
+          .sort((a, b) => b[1] - a[1])
+          .map(item => ({ house: item[0], score: item[1] }));
         
-        buttons.forEach(button => {
-            button.addEventListener('click', () => {
-                clickSound.currentTime = 0;
-                clickSound.play().catch(e => console.log("Button click sound error:", e));
-            });
+        // Add badges to each house card
+        sortedHouses.forEach((item, index) => {
+          const houseCard = document.querySelector(`.house-card[data-house="${item.house}"]`);
+          
+          const medalClass = index === 0 ? 'winner-1' : 
+                            index === 1 ? 'winner-2' : 
+                            index === 2 ? 'winner-3' : 'winner-4';
+          
+          const medalText = index === 0 ? '🏆 WINNER' : 
+                          index === 1 ? '🥈 2nd PLACE' : 
+                          index === 2 ? '🥉 3rd PLACE' : 'PARTICIPANT';
+          
+          const badge = document.createElement('div');
+          badge.className = `winner-badge ${medalClass}`;
+          badge.textContent = medalText;
+          
+          houseCard.appendChild(badge);
         });
-    </script>
+      }
+      
+      // Create confetti effect
+      function createConfetti() {
+        const colors = ['#FFD700', '#C0C0C0', '#CD7F32', '#FF0000', '#00FF00', '#0000FF', '#FFFFFF'];
+        
+        for (let i = 0; i < 100; i++) {
+          const confetti = document.createElement('div');
+          confetti.className = 'confetti';
+          confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.left = Math.random() * 100 + 'vw';
+          confetti.style.width = Math.random() * 10 + 5 + 'px';
+          confetti.style.height = Math.random() * 10 + 5 + 'px';
+          confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+          document.body.appendChild(confetti);
+          
+          // Remove confetti after animation
+          setTimeout(() => {
+            confetti.remove();
+          }, 5000);
+        }
+      }
+      
+      // Initialize with first timer option selected
+      if (timeButtons.length > 0) {
+        timeButtons[0].click();
+      }
+      reorderHouses();
+      
+      // Theme Toggle
+      const themeToggle = document.getElementById('theme-toggle');
+      
+      themeToggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+      });
+      
+      // Fullscreen functionality
+      const fullscreenBtn = document.getElementById('fullscreen-btn');
+      const mainContainer = document.querySelector('.main-container');
+      
+      fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          if (mainContainer.requestFullscreen) {
+            mainContainer.requestFullscreen();
+          } else if (mainContainer.webkitRequestFullscreen) {
+            mainContainer.webkitRequestFullscreen();
+          } else if (mainContainer.msRequestFullscreen) {
+            mainContainer.msRequestFullscreen();
+          }
+          fullscreenBtn.innerHTML = '<i class="fas fa-compress text-white"></i>';
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+          fullscreenBtn.innerHTML = '<i class="fas fa-expand text-white"></i>';
+        }
+      });
+      
+      // Update fullscreen button icon when exiting fullscreen via other methods
+      document.addEventListener('fullscreenchange', updateFullscreenButton);
+      document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+      document.addEventListener('msfullscreenchange', updateFullscreenButton);
+      
+      function updateFullscreenButton() {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+          fullscreenBtn.innerHTML = '<i class="fas fa-expand text-white"></i>';
+        }
+      }
+      
+      // Add click sound to all buttons
+      const buttons = document.querySelectorAll('button');
+      const clickSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3');
+      
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          clickSound.currentTime = 0;
+          clickSound.play().catch(e => console.log("Button click sound error:", e));
+        });
+      });
+    });
+  </script>
 </body>
 </html>
