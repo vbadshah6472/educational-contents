@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM LOCKDOWN - Escape the Lab!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap');
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+        }
+        
+        .neon-blue {
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .neon-green {
+            color: #00ff99;
+            text-shadow: 0 0 10px rgba(0, 255, 153, 0.5);
+        }
+        
+        .btn-glow {
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px currentColor;
+        }
+        
+        .btn-glow:active {
+            transform: translateY(0);
+        }
+        
+        .room-panel {
+            background: rgba(10, 25, 30, 0.8);
+            border: 1px solid rgba(0, 200, 200, 0.3);
+            box-shadow: 0 0 20px rgba(0, 200, 200, 0.1);
+            transition: all 0.5s ease;
+        }
+        
+        .room-panel:hover {
+            box-shadow: 0 0 30px rgba(0, 200, 200, 0.2);
+        }
+        
+        .progress-bar {
+            height: 5px;
+            background: linear-gradient(90deg, #00ff99, #00ffff);
+            transition: width 0.5s ease;
+        }
+        
+        .circuit-pattern {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .locked {
+            filter: grayscale(80%) brightness(0.5);
+            pointer-events: none;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        .error-shake {
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+        
+        .pattern-cell {
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .pattern-cell:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .pattern-cell {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .title {
+                font-size: 1.8rem;
+            }
+            
+            .mission-text {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="circuit-pattern"></div>
+    <div class="container mx-auto px-4 py-8 max-w-4xl relative">
+        <!-- Audio elements -->
+        <audio id="bgMusic" loop>
+            <source src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-ambience-285.mp3" type="audio/mpeg">
+        </audio>
+        <audio id="clickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-modern-click-box-check-1120.mp3"></audio>
+        <audio id="successSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
+        <audio id="errorSound" src="https://assets.mixkit.co/sfx/preview/mixkit-software-interface-remove-2578.mp3"></audio>
+        <audio id="unlockSound" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-notification-253.mp3"></audio>
+        
+        <!-- Header with timer and audio controls -->
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="title text-3xl md:text-4xl neon-blue">STEM LOCKDOWN</h1>
+            <div class="flex items-center space-x-4">
+                <div id="timerDisplay" class="hidden neon-green font-mono text-xl bg-black bg-opacity-50 px-3 py-1 rounded">
+                    <i class="fas fa-clock mr-2"></i><span id="time">20:00</span>
+                </div>
+                <button id="audioToggle" class="neon-blue text-xl">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+            </div>
+        </header>
+        
+        <!-- Progress bar -->
+        <div class="mb-8">
+            <div class="flex justify-between text-sm mb-2">
+                <span class="neon-green">Mission Progress</span>
+                <span class="neon-blue"><span id="currentLevel">0</span>/5</span>
+            </div>
+            <div class="w-full bg-gray-800 rounded-full h-2">
+                <div id="progressBar" class="progress-bar rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+        
+        <!-- Screens -->
+        <div id="screens">
+            <!-- Welcome Screen -->
+            <div id="welcomeScreen" class="room-panel rounded-xl p-6 md:p-8 text-center fade-in">
+                <h2 class="title text-2xl md:text-3xl neon-green mb-6">ESCAPE THE LAB!</h2>
+                <div class="mission-text text-lg mb-8">
+                    <p class="mb-4">A rogue AI has locked you in the STEM laboratory! To escape, you must solve a series of challenges testing your knowledge of science, technology, engineering, and math.</p>
+                    <p>Complete all 5 puzzles before time runs out to regain your freedom!</p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+                    <div class="mb-4">
+                        <label for="playerName" class="block text-sm neon-blue mb-1">Enter your name (optional):</label>
+                        <input type="text" id="playerName" class="bg-gray-900 border border-cyan-500 rounded px-4 py-2 w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-cyan-500 neon-blue">
+                    </div>
+                </div>
+                
+                <div class="flex justify-center gap-4 mt-6">
+                    <button id="startChallenge" class="btn-glow neon-green border-2 border-green-500 rounded-lg px-6 py-3 text-lg font-bold transition-all hover:bg-green-900/30">
+                        <i class="fas fa-play-circle mr-2"></i>Start Challenge
+                    </button>
+                    
+                    <label class="btn-glow neon-blue border-2 border-cyan-500 rounded-lg px-6 py-3 text-lg font-bold transition-all hover:bg-cyan-900/30 cursor-pointer flex items-center">
+                        <input type="checkbox" id="timerToggle" class="mr-2 w-4 h-4"> Timer
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Puzzle Rooms -->
+            <!-- Room 1: Math Gate -->
+            <div id="room1" class="hidden room-panel rounded-xl p-6 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="title text-xl md:text-2xl neon-blue">MATH GATE</h2>
+                    <span class="neon-green text-sm">Puzzle 1/5</span>
+                </div>
+                
+                <div class="mb-6">
+                    <p class="mb-4">The first door requires solving a math riddle:</p>
+                    <div class="neon-green border-l-4 border-green-500 pl-4 py-2 italic">
+                        "What three-digit number is 20 times the sum of its digits?"
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row items-center gap-4 mb-6">
+                    <label class="block neon-blue">Enter the number:</label>
+                    <input type="number" id="mathAnswer" class="bg-gray-900 border border-cyan-500 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 neon-blue w-24 text-center" min="100" max="999">
+                    <button id="checkMath" class="btn-glow neon-green border-2 border-green-500 rounded-lg px-4 py-2 text-sm font-bold transition-all hover:bg-green-900/30">
+                        Check Answer
+                    </button>
+                </div>
+                
+                <div id="mathFeedback" class="hidden neon-green text-center py-2"></div>
+                
+                <div class="text-xs neon-blue mt-4">
+                    <button id="mathHint" class="underline hover:text-cyan-300">Need a hint?</button>
+                    <div id="hint1" class="hidden mt-2 italic">Think about how digit sums work. If the number is ABC, then 100A + 10B + C = 20 × (A + B + C)</div>
+                </div>
+            </div>
+            
+            <!-- Room 2: Science Truth Lab -->
+            <div id="room2" class="hidden room-panel rounded-xl p-6 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="title text-xl md:text-2xl neon-blue">SCIENCE TRUTH LAB</h2>
+                    <span class="neon-green text-sm">Puzzle 2/5</span>
+                </div>
+                
+                <div class="mb-6">
+                    <p>Select all TRUE scientific statements to unlock this door:</p>
+                </div>
+                
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="science1" class="form-checkbox h-4 w-4 text-green-500 bg-gray-900 border-cyan-500">
+                        <label for="science1" class="ml-2"><span class="neon-blue">1.</span> Water boils at 100°C at sea level</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="science2" class="form-checkbox h-4 w-4 text-green-500 bg-gray-900 border-cyan-500">
+                        <label for="science2" class="ml-2"><span class="neon-blue">2.</span> The human body has 206 bones</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="science3" class="form-checkbox h-4 w-4 text-green-500 bg-gray-900 border-cyan-500">
+                        <label for="science3" class="ml-2"><span class="neon-blue">3.</span> The Earth is the largest planet in our solar system</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="science4" class="form-checkbox h-4 w-4 text-green-500 bg-gray-900 border-cyan-500">
+                        <label for="science4" class="ml-2"><span class="neon-blue">4.</span> The chemical symbol for gold is Au</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="science5" class="form-checkbox h-4 w-4 text-green-500 bg-gray-900 border-cyan-500">
+                        <label for="science5" class="ml-2"><span class="neon-blue">5.</span> Photosynthesis occurs in plant mitochondria</label>
+                    </div>
+                </div>
+                
+                <button id="checkScience" class="btn-glow neon-green border-2 border-green-500 rounded-lg px-4 py-2 text-sm font-bold transition-all hover:bg-green-900/30">
+                    Verify Selection
+                </button>
+                
+                <div id="scienceFeedback" class="hidden neon-green text-center py-2"></div>
+                
+                <div class="text-xs neon-blue mt-4">
+                    <button id="scienceHint" class="underline hover:text-cyan-300">Need a hint?</button>
+                    <div id="hint2" class="hidden mt-2 italic">Not all of these statements are true. Carefully consider each one. There are 3 correct answers.</div>
+                </div>
+            </div>
+            
+            <!-- Room 3: Pattern Portal -->
+            <div id="room3" class="hidden room-panel rounded-xl p-6 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="title text-xl md:text-2xl neon-blue">PATTERN PORTAL</h2>
+                    <span class="neon-green text-sm">Puzzle 3/5</span>
+                </div>
+                
+                <div class="mb-6">
+                    <p>Find the missing symbol in this sequence:</p>
+                </div>
+                
+                <div class="flex justify-center">
+                    <div class="grid grid-cols-5 gap-2">
+                        <div class="pattern-cell rounded flex items-center justify-center bg-gray-800" data-value="1">✦</div>
+                        <div class="pattern-cell rounded flex items-center justify-center bg-gray-800" data-value="2">✧</div>
+                        <div class="pattern-cell rounded flex items-center justify-center bg-gray-800" data-value="3">✸</div>
+                        <div class="pattern-cell rounded flex items-center justify-center bg-gray-800" data-value="4">✦</div>
+                        <div class="pattern-cell rounded flex items-center justify-center bg-gray-800 neon-green border-2 border-green-500 text-center cursor-default">?</div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center gap-4 mt-8">
+                    <button data-choice="1" class="pattern-choice btn-glow neon-blue border-2 border-cyan-500 rounded-lg px-4 py-2 text-xl font-bold transition-all hover:bg-cyan-900/30">✦</button>
+                    <button data-choice="2" class="pattern-choice btn-glow neon-blue border-2 border-cyan-500 rounded-lg px-4 py-2 text-xl font-bold transition-all hover:bg-cyan-900/30">✧</button>
+                    <button data-choice="3" class="pattern-choice btn-glow neon-blue border-2 border-cyan-500 rounded-lg px-4 py-2 text-xl font-bold transition-all hover:bg-cyan-900/30">✸</button>
+                    <button data-choice="4" class="pattern-choice btn-glow neon-blue border-2 border-cyan-500 rounded-lg px-4 py-2 text-xl font-bold transition-all hover:bg-cyan-900/30">✹</button>
+                </div>
+                
+                <div id="patternFeedback" class="hidden neon-green text-center py-2 mt-4"></div>
+                
+                <div class="text-xs neon-blue mt-4 text-center">
+                    <button id="patternHint" class="underline hover:text-cyan-300">Need a hint?</button>
+                    <div id="hint3" class="hidden mt-2 italic">Look for alternating patterns in the sequence. The symbols might represent directions or states.</div>
+                </div>
+            </div>
+            
+            <!-- Room 4: Code Vault -->
+            <div id="room4" class="hidden room-panel rounded-xl p-6 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="title text-xl md:text-2xl neon-blue">CODE VAULT</h2>
+                    <span class="neon-green text-sm">Puzzle 4/5</span>
+                </div>
+                
+                <div class="mb-6">
+                    <p>These doors are protected by logical encryption. Answer all questions correctly:</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="neon-blue border-l-4 border-cyan-500 pl-4 py-2">
+                        <p class="mb-2">1. If all Bloops are Razzies and all Razzies are Lazzies, are all Bloops definitely Lazzies?</p>
+                        <div class="flex gap-4">
+                            <label class="flex items-center">
+                                <input type="radio" name="logic1" value="true" class="h-4 w-4 text-green-500 bg-gray-900 border-cyan-500">
+                                <span class="ml-2">True</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="logic1" value="false" class="h-4 w-4 text-green-500 bg-gray-900 border-cyan-500">
+                                <span class="ml-2">False</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="neon-blue border-l-4 border-cyan-500 pl-4 py-2">
+                        <p class="mb-2">2. What comes next in this sequence: 1, 1, 2, 3, 5, 8, 13, ___?</p>
+                        <input type="number" id="fibonacciAnswer" class="bg-gray-900 border border-cyan-500 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 neon-blue w-20">
+                    </div>
+                    
+                    <div class="neon-blue border-l-4 border-cyan-500 pl-4 py-2">
+                        <p class="mb-2">3. If a train travels 60 miles in 1 hour, how far will it travel in 15 minutes?</p>
+                        <input type="number" id="distanceAnswer" class="bg-gray-900 border border-cyan-500 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 neon-blue w-20">
+                        <span class="ml-2">miles</span>
+                    </div>
+                </div>
+                
+                <button id="checkCode" class="btn-glow neon-green border-2 border-green-500 rounded-lg px-4 py-2 text-sm font-bold transition-all hover:bg-green-900/30 mt-6">
+                    Verify Answers
+                </button>
+                
+                <div id="codeFeedback" class="hidden neon-green text-center py-2 mt-4"></div>
+                
+                <div class="text-xs neon-blue mt-4">
+                    <button id="codeHint" class="underline hover:text-cyan-300">Need a hint?</button>
+                    <div id="hint4" class="hidden mt-2 italic">1. Think about category inclusion. 2. Each number is the sum of the two before it. 3. Calculate speed per minute.</div>
+                </div>
+            </div>
+            
+            <!-- Room 5: Final Quiz Lock -->
+            <div id="room5" class="hidden room-panel rounded-xl p-6 md:p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="title text-xl md:text-2xl neon-blue">FINAL QUIZ LOCK</h2>
+                    <span class="neon-green text-sm">Puzzle 5/5</span>
+                </div>
+                
+                <div class="mb-6">
+                    <p>Answer all questions correctly to dismantle the final lock:</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="neon-blue border-l-4 border-cyan-500 pl-4 py-2">
+                        <p class="mb-2">1. What is the chemical formula for table salt?</p>
+                        <input type="text" id="saltFormula" class="bg-gray-900 border border-cyan-500 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 neon-blue w-20" placeholder="e.g. H2O">
+                    </div>
+                    
+                    <div class="neon-blue border-l-4 border-cyan-500 pl-4 py-2">
+                        <p class="mb-2">2. In a right triangle with sides 3 and 4, how long is the hypotenuse?</p>
+                        <input type="number" id="hypotenuseAnswer" class="bg-gray-900 border border-cyan-500 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 neon-blue w-20">
+                    </div>
+                    
+                    <div class="neon-blue border-l-4 border-cyan-500 pl-4 py-2">
+                        <p class="mb-2">3. Which planet is known as the Red Planet?</p>
+                        <select id="planetAnswer" class="bg-gray-900 border border-cyan-500 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500 neon-blue">
+                            <option value="" disabled selected>Select a planet</option>
+                            <option value="venus">Venus</option>
+                            <option value="mars">Mars</option>
+                            <option value="jupiter">Jupiter</option>
+                            <option value="saturn">Saturn</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button id="checkFinal" class="btn-glow neon-green border-2 border-green-500 rounded-lg px-4 py-2 text-sm font-bold transition-all hover:bg-green-900/30 mt-6">
+                    Verify Final Answers
+                </button>
+                
+                <div id="finalFeedback" class="hidden neon-green text-center py-2 mt-4"></div>
+                
+                <div class="text-xs neon-blue mt-4">
+                    <button id="finalHint" class="underline hover:text-cyan-300">Need a hint?</button>
+                    <div id="hint5" class="hidden mt-2 italic">1. NaCl is formed from sodium and chlorine. 2. Remember the Pythagorean theorem. 3. Think about the color often associated with war.</div>
+                </div>
+            </div>
+            
+            <!-- Completion Screen -->
+            <div id="completionScreen" class="hidden room-panel rounded-xl p-6 md:p-8 text-center fade-in">
+                <div class="neon-green text-5xl mb-6">
+                    <i class="fas fa-trophy pulse"></i>
+                </div>
+                <h2 class="title text-3xl md:text-4xl neon-green mb-4">ESCAPE SUCCESSFUL!</h2>
+                <p class="text-xl mb-6">Congratulations, <span id="displayName" class="neon-blue">Agent</span>!</p>
+                <p class="mb-8">You've successfully completed all STEM challenges and escaped the laboratory. Your knowledge and problem-solving skills have saved the day!</p>
+                
+                <div class="flex justify-center gap-4 mt-8">
+                    <button id="downloadCert" class="btn-glow neon-green border-2 border-green-500 rounded-lg px-6 py-3 text-lg font-bold transition-all hover:bg-green-900/30">
+                        <i class="fas fa-download mr-2"></i>Download Certificate
+                    </button>
+                    
+                    <button id="restartGame" class="btn-glow neon-blue border-2 border-cyan-500 rounded-lg px-6 py-3 text-lg font-bold transition-all hover:bg-cyan-900/30">
+                        <i class="fas fa-redo mr-2"></i>Play Again
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation Controls (for non-mobile) -->
+        <div id="navControls" class="hidden md:flex justify-between mt-8">
+            <button id="prevRoom" class="btn-glow neon-blue border-2 border-cyan-500 rounded-lg px-4 py-2 text-sm font-bold transition-all hover:bg-cyan-900/30 opacity-0 pointer-events-none">
+                <i class="fas fa-arrow-left mr-2"></i>Previous
+            </button>
+            <div id="roomIndicators" class="flex gap-2">
+                <div class="w-3 h-3 rounded-full bg-gray-700 room-indicator" data-room="1"></div>
+                <div class="w-3 h-3 rounded-full bg-gray-700 room-indicator" data-room="2"></div>
+                <div class="w-3 h-3 rounded-full bg-gray-700 room-indicator" data-room="3"></div>
+                <div class="w-3 h-3 rounded-full bg-gray-700 room-indicator" data-room="4"></div>
+                <div class="w-3 h-3 rounded-full bg-gray-700 room-indicator" data-room="5"></div>
+            </div>
+            <button id="nextRoom" class="btn-glow neon-green border-2 border-green-500 rounded-lg px-4 py-2 text-sm font-bold transition-all hover:bg-green-900/30 opacity-0 pointer-events-none">
+                Next<i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        const gameState = {
+            currentRoom: 0,
+            completedRooms: 0,
+            timerEnabled: false,
+            audioEnabled: true,
+            timeRemaining: 1200, // 20 minutes in seconds
+            roomAnswers: {
+                room1: 360,
+                room2: ['science1', 'science2', 'science4'],
+                room3: 2,
+                room4: {
+                    logic1: 'true',
+                    fibonacci: 21,
+                    distance: 15
+                },
+                room5: {
+                    salt: 'NaCl',
+                    hypotenuse: 5,
+                    planet: 'mars'
+                }
+            },
+            playerName: ''
+        };
+        
+        // DOM elements
+        const elements = {
+            screens: ['welcomeScreen', 'room1', 'room2', 'room3', 'room4', 'room5', 'completionScreen'],
+            audio: {
+                bgMusic: document.getElementById('bgMusic'),
+                clickSound: document.getElementById('clickSound'),
+                successSound: document.getElementById('successSound'),
+                errorSound: document.getElementById('errorSound'),
+                unlockSound: document.getElementById('unlockSound')
+            },
+            toggle: {
+                audio: document.getElementById('audioToggle'),
+                timer: document.getElementById('timerToggle')
+            },
+            display: {
+                timer: document.getElementById('timerDisplay'),
+                time: document.getElementById('time'),
+                currentLevel: document.getElementById('currentLevel'),
+                progressBar: document.getElementById('progressBar'),
+                name: document.getElementById('displayName')
+            },
+            buttons: {
+                start: document.getElementById('startChallenge'),
+                check: {
+                    math: document.getElementById('checkMath'),
+                    science: document.getElementById('checkScience'),
+                    code: document.getElementById('checkCode'),
+                    final: document.getElementById('checkFinal')
+                },
+                hint: {
+                    math: document.getElementById('mathHint'),
+                    science: document.getElementById('scienceHint'),
+                    pattern: document.getElementById('patternHint'),
+                    code: document.getElementById('codeHint'),
+                    final: document.getElementById('finalHint')
+                },
+                nav: {
+                    prev: document.getElementById('prevRoom'),
+                    next: document.getElementById('nextRoom')
+                },
+                restart: document.getElementById('restartGame'),
+                download: document.getElementById('downloadCert')
+            },
+            inputs: {
+                name: document.getElementById('playerName'),
+                math: document.getElementById('mathAnswer'),
+                science: [
+                    document.getElementById('science1'),
+                    document.getElementById('science2'),
+                    document.getElementById('science3'),
+                    document.getElementById('science4'),
+                    document.getElementById('science5')
+                ],
+                code: {
+                    logic1: document.querySelectorAll('input[name="logic1"]'),
+                    fibonacci: document.getElementById('fibonacciAnswer'),
+                    distance: document.getElementById('distanceAnswer')
+                },
+                final: {
+                    salt: document.getElementById('saltFormula'),
+                    hypotenuse: document.getElementById('hypotenuseAnswer'),
+                    planet: document.getElementById('planetAnswer')
+                }
+            },
+            feedback: {
+                math: document.getElementById('mathFeedback'),
+                science: document.getElementById('scienceFeedback'),
+                pattern: document.getElementById('patternFeedback'),
+                code: document.getElementById('codeFeedback'),
+                final: document.getElementById('finalFeedback')
+            }
+        };
+        
+        // Pattern puzzle elements
+        const patternChoices = document.querySelectorAll('.pattern-choice');
+        const patternCells = document.querySelectorAll('.pattern-cell');
+        
+        // Initialize game
+        function initGame() {
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Update UI
+            updateProgress();
+            updateRoomNavigation();
+            
+            // Start with welcome screen
+            showScreen(0);
+            
+            // Try to autoplay music (may be blocked by browser)
+            playBackgroundMusic();
+        }
+        
+        // Set up all event listeners
+        function setupEventListeners() {
+            // Audio toggle
+            elements.toggle.audio.addEventListener('click', toggleAudio);
+            
+            // Timer toggle
+            elements.toggle.timer.addEventListener('change', (e) => {
+                gameState.timerEnabled = e.target.checked;
+                elements.display.timer.classList.toggle('hidden', !gameState.timerEnabled);
+                playClickSound();
+            });
+            
+            // Start challenge button
+            elements.buttons.start.addEventListener('click', startChallenge);
+            
+            // Check answer buttons
+            elements.buttons.check.math.addEventListener('click', checkMathAnswer);
+            elements.buttons.check.science.addEventListener('click', checkScienceAnswers);
+            elements.buttons.check.code.addEventListener('click', checkCodeAnswers);
+            elements.buttons.check.final.addEventListener('click', checkFinalAnswers);
+            
+            // Pattern puzzle choices
+            patternChoices.forEach(choice => {
+                choice.addEventListener('click', () => checkPatternAnswer(choice.dataset.choice));
+            });
+            
+            // Hint buttons
+            elements.buttons.hint.math.addEventListener('click', () => toggleHint('hint1'));
+            elements.buttons.hint.science.addEventListener('click', () => toggleHint('hint2'));
+            elements.buttons.hint.pattern.addEventListener('click', () => toggleHint('hint3'));
+            elements.buttons.hint.code.addEventListener('click', () => toggleHint('hint4'));
+            elements.buttons.hint.final.addEventListener('click', () => toggleHint('hint5'));
+            
+            // Navigation buttons
+            elements.buttons.nav.prev.addEventListener('click', goToPreviousRoom);
+            elements.buttons.nav.next.addEventListener('click', goToNextRoom);
+            
+            // Completion screen buttons
+            elements.buttons.restart.addEventListener('click', restartGame);
+            elements.buttons.download.addEventListener('click', downloadCertificate);
+            
+            // Room indicators (for navigation)
+            document.querySelectorAll('.room-indicator').forEach(indicator => {
+                indicator.addEventListener('click', () => {
+                    goToRoom(parseInt(indicator.dataset.room));
+                });
+            });
+            
+            // Allow pressing Enter in input fields to submit
+            elements.inputs.math.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkMathAnswer();
+            });
+            
+            elements.inputs.code.fibonacci.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkCodeAnswers();
+            });
+            
+            elements.inputs.code.distance.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkCodeAnswers();
+            });
+            
+            elements.inputs.final.salt.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkFinalAnswers();
+            });
+            
+            elements.inputs.final.hypotenuse.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') checkFinalAnswers();
+            });
+        }
+        
+        // Show a specific screen and hide others
+        function showScreen(index) {
+            elements.screens.forEach((screen, i) => {
+                document.getElementById(screen).classList.toggle('hidden', i !== index);
+            });
+            
+            // Update current room in game state
+            if (index > 0 && index <= 5) {
+                gameState.currentRoom = index;
+                updateRoomNavigation();
+                updateProgress();
+            }
+            
+            // Show/hide navigation controls based on screen
+            if (index > 0 && index < 6) {
+                document.getElementById('navControls').classList.remove('hidden');
+            } else {
+                document.getElementById('navControls').classList.add('hidden');
+            }
+        }
+        
+        // Start the challenge
+        function startChallenge() {
+            playClickSound();
+            gameState.playerName = elements.inputs.name.value || 'Agent';
+            elements.display.name.textContent = gameState.playerName;
+            
+            if (gameState.timerEnabled) {
+                startTimer();
+            }
+            
+            goToRoom(1);
+        }
+        
+        // Timer functions
+        function startTimer() {
+            updateTimerDisplay();
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeRemaining--;
+                updateTimerDisplay();
+                
+                if (gameState.timeRemaining <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    timeUp();
+                }
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(gameState.timeRemaining / 60);
+            const seconds = gameState.timeRemaining % 60;
+            elements.display.time.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Change color when time is running low
+            if (gameState.timeRemaining <= 300) { // 5 minutes
+                elements.display.time.classList.remove('neon-green');
+                elements.display.time.classList.add('text-red-500');
+            }
+        }
+        
+        function timeUp() {
+            // Show time up message
+            alert('Time is up! The laboratory has remained locked. Click OK to try again.');
+            restartGame();
+        }
+        
+        // Audio control functions
+        function toggleAudio() {
+            gameState.audioEnabled = !gameState.audioEnabled;
+            
+            if (gameState.audioEnabled) {
+                elements.toggle.audio.innerHTML = '<i class="fas fa-volume-up"></i>';
+                playBackgroundMusic();
+            } else {
+                elements.toggle.audio.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                stopBackgroundMusic();
+            }
+            
+            playClickSound();
+        }
+        
+        function playBackgroundMusic() {
+            if (gameState.audioEnabled) {
+                try {
+                    elements.audio.bgMusic.currentTime = 0;
+                    elements.audio.bgMusic.play();
+                } catch (e) {
+                    console.log('Audio playback prevented by browser');
+                }
+            }
+        }
+        
+        function stopBackgroundMusic() {
+            elements.audio.bgMusic.pause();
+        }
+        
+        function playClickSound() {
+            if (gameState.audioEnabled) {
+                elements.audio.clickSound.currentTime = 0;
+                elements.audio.clickSound.play();
+            }
+        }
+        
+        function playSuccessSound() {
+            if (gameState.audioEnabled) {
+                elements.audio.successSound.currentTime = 0;
+                elements.audio.successSound.play();
+            }
+        }
+        
+        function playErrorSound() {
+            if (gameState.audioEnabled) {
+                elements.audio.errorSound.currentTime = 0;
+                elements.audio.errorSound.play();
+            }
+        }
+        
+        function playUnlockSound() {
+            if (gameState.audioEnabled) {
+                elements.audio.unlockSound.currentTime = 0;
+                elements.audio.unlockSound.play();
+            }
+        }
+        
+        // Game progress functions
+        function updateProgress() {
+            // Update progress bar
+            const progressPercent = (gameState.completedRooms / 5) * 100;
+            elements.display.progressBar.style.width = `${progressPercent}%`;
+            
+            // Update current level display
+            elements.display.currentLevel.textContent = gameState.completedRooms;
+            
+            // Update room indicators
+            document.querySelectorAll('.room-indicator').forEach((indicator, i) => {
+                indicator.classList.toggle('bg-gray-700', i >= gameState.completedRooms);
+                indicator.classList.toggle('bg-green-500', i < gameState.completedRooms);
+            });
+        }
+        
+        function updateRoomNavigation() {
+            // Update previous button
+            if (gameState.currentRoom > 1) {
+                elements.buttons.nav.prev.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                elements.buttons.nav.prev.classList.add('opacity-0', 'pointer-events-none');
+            }
+            
+            // Update next button
+            if (gameState.currentRoom <= gameState.completedRooms && gameState.currentRoom < 5) {
+                elements.buttons.nav.next.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                elements.buttons.nav.next.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+        
+        // Navigation functions
+        function goToRoom(roomNumber) {
+            if (roomNumber === 1 || roomNumber <= gameState.completedRooms + 1) {
+                showScreen(roomNumber);
+            }
+        }
+        
+        function goToPreviousRoom() {
+            playClickSound();
+            if (gameState.currentRoom > 1) {
+                goToRoom(gameState.currentRoom - 1);
+            }
+        }
+        
+        function goToNextRoom() {
+            playClickSound();
+            if (gameState.currentRoom <= gameState.completedRooms && gameState.currentRoom < 5) {
+                goToRoom(gameState.currentRoom + 1);
+            } else if (gameState.completedRooms === 5) {
+                showScreen(6); // Completion screen
+            }
+        }
+        
+        // Room-specific answer checking functions
+        function checkMathAnswer() {
+            playClickSound();
+            const answer = parseInt(elements.inputs.math.value);
+            
+            if (isNaN(answer)) {
+                showFeedback(elements.feedback.math, 'Please enter a valid number', false);
+                return;
+            }
+            
+            if (answer === gameState.roomAnswers.room1) {
+                showFeedback(elements.feedback.math, 'Correct! The math gate is opening...', true);
+                setTimeout(() => {
+                    roomCompleted(1);
+                }, 1500);
+            } else {
+                showFeedback(elements.feedback.math, 'Incorrect. Try again!', false);
+            }
+        }
+        
+        function checkScienceAnswers() {
+            playClickSound();
+            const selected = [];
+            
+            elements.inputs.science.forEach((checkbox, index) => {
+                if (checkbox.checked) {
+                    selected.push(`science${index + 1}`);
+                }
+            });
+            
+            // Check if the selected answers match exactly the correct ones
+            const correct = selected.length === gameState.roomAnswers.room2.length && 
+                          gameState.roomAnswers.room2.every(item => selected.includes(item));
+            
+            if (correct) {
+                showFeedback(elements.feedback.science, 'Science verification complete! Access granted...', true);
+                setTimeout(() => {
+                    roomCompleted(2);
+                }, 1500);
+            } else {
+                showFeedback(elements.feedback.science, 'Incorrect selection. Try again!', false);
+            }
+        }
+        
+        function checkPatternAnswer(choice) {
+            playClickSound();
+            const answer = parseInt(choice);
+            
+            if (answer === gameState.roomAnswers.room3) {
+                showFeedback(elements.feedback.pattern, 'Pattern recognized! Portal activating...', true);
+                setTimeout(() => {
+                    roomCompleted(3);
+                }, 1500);
+            } else {
+                showFeedback(elements.feedback.pattern, 'Incorrect pattern. Try again!', false);
+            }
+        }
+        
+        function checkCodeAnswers() {
+            playClickSound();
+            let allCorrect = true;
+            const feedbackMessages = [];
+            
+            // Check logic question
+            const logicAnswer = document.querySelector('input[name="logic1"]:checked')?.value;
+            if (logicAnswer !== gameState.roomAnswers.room4.logic1) {
+                allCorrect = false;
+                feedbackMessages.push('Logic question incorrect');
+            }
+            
+            // Check Fibonacci sequence
+            const fibAnswer = parseInt(elements.inputs.code.fibonacci.value);
+            if (fibAnswer !== gameState.roomAnswers.room4.fibonacci) {
+                allCorrect = false;
+                feedbackMessages.push('Sequence incorrect');
+            }
+            
+            // Check distance question
+            const distanceAnswer = parseInt(elements.inputs.code.distance.value);
+            if (distanceAnswer !== gameState.roomAnswers.room4.distance) {
+                allCorrect = false;
+                feedbackMessages.push('Distance calculation incorrect');
+            }
+            
+            if (allCorrect) {
+                showFeedback(elements.feedback.code, 'Code validated! Vault unlocked...', true);
+                setTimeout(() => {
+                    roomCompleted(4);
+                }, 1500);
+            } else {
+                showFeedback(elements.feedback.code, `Errors: ${feedbackMessages.join(', ')}`, false);
+            }
+        }
+        
+        function checkFinalAnswers() {
+            playClickSound();
+            let allCorrect = true;
+            const feedbackMessages = [];
+            
+            // Check salt formula (case insensitive)
+            const saltAnswer = elements.inputs.final.salt.value.trim();
+            if (saltAnswer.toLowerCase() !== gameState.roomAnswers.room5.salt.toLowerCase()) {
+                allCorrect = false;
+                feedbackMessages.push('Chemical formula incorrect');
+            }
+            
+            // Check hypotenuse
+            const hypotenuseAnswer = parseInt(elements.inputs.final.hypotenuse.value);
+            if (hypotenuseAnswer !== gameState.roomAnswers.room5.hypotenuse) {
+                allCorrect = false;
+                feedbackMessages.push('Triangle calculation incorrect');
+            }
+            
+            // Check planet
+            const planetAnswer = elements.inputs.final.planet.value;
+            if (planetAnswer !== gameState.roomAnswers.room5.planet) {
+                allCorrect = false;
+                feedbackMessages.push('Planet selection incorrect');
+            }
+            
+            if (allCorrect) {
+                showFeedback(elements.feedback.final, 'Final lock disengaged! Escape route opening...', true);
+                setTimeout(() => {
+                    roomCompleted(5);
+                    showScreen(6); // Show completion screen
+                }, 1500);
+            } else {
+                showFeedback(elements.feedback.final, `Errors: ${feedbackMessages.join(', ')}`, false);
+            }
+        }
+        
+        // Helper functions for feedback and room completion
+        function showFeedback(element, message, isSuccess) {
+            element.textContent = message;
+            element.classList.remove('hidden');
+            
+            if (isSuccess) {
+                element.classList.remove('text-red-500');
+                element.classList.add('neon-green');
+                playSuccessSound();
+            } else {
+                element.classList.remove('neon-green');
+                element.classList.add('text-red-500');
+                playErrorSound();
+                element.classList.add('error-shake');
+                setTimeout(() => {
+                    element.classList.remove('error-shake');
+                }, 500);
+            }
+            
+            setTimeout(() => {
+                element.classList.add('hidden');
+            }, 3000);
+        }
+        
+        function roomCompleted(roomNumber) {
+            if (roomNumber > gameState.completedRooms) {
+                gameState.completedRooms = roomNumber;
+                updateProgress();
+                updateRoomNavigation();
+                playUnlockSound();
+            }
+        }
+        
+        // Hint toggles
+        function toggleHint(hintId) {
+            playClickSound();
+            const hint = document.getElementById(hintId);
+            hint.classList.toggle('hidden');
+        }
+        
+        // Completion functions
+        function downloadCertificate() {
+            playClickSound();
+            alert(`Certificate for ${gameState.playerName} would be downloaded here in a real implementation.`);
+            // In a real implementation, this would generate a PDF certificate
+        }
+        
+        function restartGame() {
+            playClickSound();
+            
+            // Reset game state
+            gameState.currentRoom = 0;
+            gameState.completedRooms = 0;
+            gameState.timeRemaining = 1200;
+            
+            // Clear any intervals
+            if (gameState.timerInterval) {
+                clearInterval(gameState.timerInterval);
+            }
+            
+            // Reset inputs
+            elements.inputs.math.value = '';
+            elements.inputs.science.forEach(checkbox => checkbox.checked = false);
+            document.querySelectorAll('input[name="logic1"]').forEach(radio => radio.checked = false);
+            elements.inputs.code.fibonacci.value = '';
+            elements.inputs.code.distance.value = '';
+            elements.inputs.final.salt.value = '';
+            elements.inputs.final.hypotenuse.value = '';
+            elements.inputs.final.planet.value = '';
+            
+            // Reset feedback
+            Object.values(elements.feedback).forEach(feedback => {
+                feedback.classList.add('hidden');
+            });
+            
+            // Hide all hints
+            document.querySelectorAll('[id^="hint"]').forEach(hint => {
+                hint.classList.add('hidden');
+            });
+            
+            // Reset timer display
+            elements.display.timer.classList.add('hidden');
+            elements.display.time.textContent = '20:00';
+            elements.display.time.classList.remove('text-red-500');
+            elements.display.time.classList.add('neon-green');
+            
+            // Go back to welcome screen
+            showScreen(0);
+        }
+        
+        // Initialize the game when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
